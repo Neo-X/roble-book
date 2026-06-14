@@ -2,10 +2,16 @@
 num: "17"
 title: "Offline RL"
 track: "Offline RL"
-youtube_id:
+youtube_id: "ghJSjErT3Nk"
 slides_url: "https://drive.google.com/file/d/1lIZJEUdEa9JD35a7_wqs7Acsddlb1APF/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://proceedings.neurips.cc/paper/2021/hash/7f489f642a0ddb10272b5c31057f0663-Abstract.html"
+  - url: "https://arxiv.org/abs/2006.04779"
+  - url: "https://arxiv.org/abs/2204.05618"
+  - url: "https://proceedings.mlr.press/v202/ball23a.html"
+  - url: "https://proceedings.mlr.press/v229/chebotar23a.html"
 description: >
   Offline (batch) reinforcement learning — learning policies from a fixed dataset without
   any environment interaction. Covers distributional shift in the offline setting,

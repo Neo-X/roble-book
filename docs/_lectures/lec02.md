@@ -2,7 +2,8 @@
 num: "02"
 title: "Introduction to Deep RL"
 track: "Foundations"
-youtube_id:
+youtube_id: "jQIvURjx1hM"
+youtube_id_2: "V5QMeThHSzo"
 slides_url:
 colab_url:
 chapter_url:

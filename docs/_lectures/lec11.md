@@ -2,10 +2,15 @@
 num: "11"
 title: "Goal-Conditioned RL"
 track: "Goal-Conditioned & Language-Guided RL"
-youtube_id:
+youtube_id: "-ZchWqayPR8"
 slides_url: "https://drive.google.com/file/d/1TU2f9pm_USSiyfbYkK45qVjssRbaqUQ_/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.51.3077&rep=rep1&type=pdf"
+  - url: "https://proceedings.neurips.cc/paper/2017/hash/453fadbd8a1a3af50a9df4df899537b5-Abstract.html"
+  - url: "https://arxiv.org/pdf/1606.05312.pdf"
+  - url: "https://arxiv.org/abs/2104.11707"
 description: >
   Goal-conditioned policies that generalize across tasks by conditioning on a desired goal state.
   Covers Hindsight Experience Replay (HER) as a key technique for learning from sparse rewards

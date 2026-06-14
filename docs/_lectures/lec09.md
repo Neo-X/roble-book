@@ -2,10 +2,15 @@
 num: "09"
 title: "Value Methods"
 track: "Policy Gradient Methods"
-youtube_id:
+youtube_id: "OjVXsQqg7mc"
+youtube_id_2: "xmhfhf6EXNI"
 slides_url: "https://drive.google.com/file/d/1negjfVwQHBp5-TbgtwD3px6-FKbKq5qF/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://www.nature.com/articles/s41586-019-1724-z"
+  - url: "https://arxiv.org/pdf/1910.07113"
+  - url: "https://openreview.net/forum?id=KdVLK0Wo5z"
 description: >
   Value function methods beyond Q-learning: soft actor-critic, distributional RL,
   and the connections between policy gradients and value-based methods that lead

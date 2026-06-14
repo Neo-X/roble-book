@@ -2,10 +2,15 @@
 num: "14"
 title: "Hierarchical RL"
 track: "Hierarchical RL"
-youtube_id:
+youtube_id: "rEO6tyVaMzM"
 slides_url: "https://drive.google.com/file/d/19FHrf60-yzZMAuBHFxIjQ4NxFqr-f1mD/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://dl.acm.org/doi/10.1145/3072959.3073602"
+  - url: "https://proceedings.neurips.cc/paper/2018/hash/e6384711491713d29bc63fc5eeb5ba4f-Abstract.html"
+  - url: "https://thegradient.pub/the-promise-of-hierarchical-reinforcement-learning/"
+  - url: "https://progprompt.github.io/"
 description: >
   Temporal abstraction and hierarchical planning. The options framework, subgoal discovery,
   and motor primitives for structuring long-horizon tasks into manageable sub-problems.

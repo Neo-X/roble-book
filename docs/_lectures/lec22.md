@@ -2,10 +2,14 @@
 num: "22"
 title: "Generalization for Robotics"
 track: "Transfer & Generalization"
-youtube_id:
+youtube_id: "cD8d6b7OPjc"
 slides_url: "https://drive.google.com/file/d/179yh1dsQpuqhkRCw6el5j7sACjIWFovS/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://arxiv.org/abs/2206.12279"
+  - url: "https://arxiv.org/abs/2203.11931"
+  - url: "https://openreview.net/forum?id=PbQOZntuXO"
 description: >
   Generalization across tasks, objects, and environments. Meta-learning, multi-task learning,
   and how large pretrained vision and language models can provide transferable representations

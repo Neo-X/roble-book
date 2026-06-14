@@ -98,6 +98,18 @@ header h1 a:hover { text-decoration: none; opacity: .85; }
 }
 .btn:hover { opacity: .88; transform: translateY(-1px); text-decoration: none; }
 
+.wip-badge {
+  display: inline-block;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  background: rgba(255,255,255,.25);
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
 .btn-primary   { background: #ff0000; color: #fff; }
 .btn-secondary { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
 .btn-slides    { background: #f59e0b; color: #fff; }
@@ -111,6 +123,16 @@ header h1 a:hover { text-decoration: none; opacity: .85; }
   padding: 1.5rem 0;
 }
 .about p { color: var(--muted); font-size: .97rem; max-width: 800px; }
+
+/* ── WIP notice ── */
+.wip-notice {
+  background: #fffbeb;
+  border-top: 1px solid #fde68a;
+  border-bottom: 1px solid #fde68a;
+  padding: 1rem 0;
+}
+.wip-notice p { font-size: .95rem; color: #92400e; margin: 0; }
+.wip-notice a { color: #b45309; font-weight: 600; }
 
 /* ── Lectures section ── */
 .lectures-section { padding: 2.5rem 0 4rem; }
@@ -215,6 +237,14 @@ a.card-link:hover { text-decoration: none; }
   overflow: hidden;
   border-radius: var(--radius);
 }
+.video-part-label {
+  color: #94a3b8;
+  font-size: .85rem;
+  margin-top: .6rem;
+  text-align: center;
+}
+.video-part-label a { color: #93c5fd; }
+
 .video-wrapper iframe {
   position: absolute;
   top: 0; left: 0;
@@ -240,6 +270,51 @@ a.card-link:hover { text-decoration: none; }
 }
 .lecture-body li { margin-bottom: .3rem; color: #374151; }
 
+/* ── Readings section ── */
+.readings-section {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.readings-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 .4rem !important;
+}
+.readings-note {
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: .75rem !important;
+}
+.readings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.readings-list li {
+  font-size: .88rem;
+  padding: .3rem 0;
+  border-bottom: 1px solid var(--border);
+  word-break: break-all;
+}
+.readings-list li:last-child { border-bottom: none; }
+.readings-list a { color: var(--blue); }
+.required-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
+  padding: 1px 6px;
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
 /* ── Lecture nav bar ── */
 .lecture-nav {
   border-top: 1px solid var(--border);
@@ -252,6 +327,61 @@ a.card-link:hover { text-decoration: none; }
   color: var(--blue);
 }
 .nav-back:hover { text-decoration: none; opacity: .8; }
+
+/* ── Site nav ── */
+.site-nav {
+  background: #1e3a4f;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: .5rem 0;
+}
+.site-nav .container {
+  display: flex;
+  gap: .25rem;
+  flex-wrap: wrap;
+}
+.site-nav a {
+  color: #94a3b8;
+  font-size: .875rem;
+  font-weight: 500;
+  padding: .4rem .75rem;
+  border-radius: var(--radius);
+  transition: background .15s, color .15s;
+}
+.site-nav a:hover,
+.site-nav a.active {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ── Page content ── */
+.page-body {
+  padding: 2.5rem 1.5rem 4rem;
+  max-width: 800px;
+}
+.page-body h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 .75rem; }
+.page-body h3 { font-size: 1.15rem; font-weight: 700; margin: 1.75rem 0 .5rem; }
+.page-body h4 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 .4rem; }
+.page-body p { margin-bottom: 1rem; line-height: 1.7; }
+.page-body ul, .page-body ol { margin: .5rem 0 1rem 1.5rem; line-height: 1.7; }
+.page-body li { margin-bottom: .3rem; }
+.page-body a { color: var(--blue); }
+.page-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.page-body blockquote {
+  border-left: 4px solid var(--blue-light);
+  padding: .75rem 1rem;
+  background: #f8faff;
+  margin: 1rem 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--muted);
+  font-style: italic;
+}
+.page-layout .wip-notice {
+  padding: 1rem 1.5rem;
+  margin-top: 2rem;
+  border-radius: var(--radius);
+  border: 1px solid #fde68a;
+}
 
 /* ── Footer ── */
 footer {

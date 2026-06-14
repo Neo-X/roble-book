@@ -6,6 +6,11 @@ youtube_id:
 slides_url: "https://drive.google.com/file/d/13G6yjYAYriJqRKBY3SLlYHETW06mEyW7/view"
 colab_url: "https://colab.research.google.com/drive/1YvcYgDveePA3I9n1U5Ne0sXqnZ62LnH1"
 chapter_url:
+readings:
+  - url: "https://arxiv.org/abs/1709.10489"
+    required: true
+  - url: "https://arxiv.org/abs/1710.02298"
+  - url: "https://arxiv.org/abs/1611.05397"
 description: >
   Using learned dynamics models for policy improvement — including MBPO, probabilistic ensembles,
   and model-based policy optimization. Contrasts sample efficiency gains against the bias

@@ -2,10 +2,14 @@
 num: "26"
 title: "Reward Functions with LLMs"
 track: "Goal-Conditioned & Language-Guided RL"
-youtube_id:
+youtube_id: "HpTUdoY22DQ"
 slides_url: "https://drive.google.com/file/d/1SlM4QvGkn9ftvdOx_l7O-30_dofhCCYj/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://eureka-research.github.io/"
+  - url: "https://arxiv.org/abs/2310.12921"
+  - url: "https://arxiv.org/abs/2411.04549"
 description: >
   Using large language models to specify, generate, and shape reward functions.
   Covers EUREKA, Text2Reward, VLM-based reward labeling, and the broader question

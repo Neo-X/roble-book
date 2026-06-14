@@ -6,19 +6,14 @@
   <title>{% if page.title %}{{ page.title }} — {% endif %}{{ site.title }}</title>
   <meta name="description" content="{{ page.description | default: site.description }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-  <script>
-    MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
-  </script>
-  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
-<body>
+<body class="page-layout">
 
 <header>
   <div class="header-inner">
     <div class="header-text">
-      <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
-      <p class="subtitle">{{ site.description }}</p>
-      <p class="instructor"><a href="{{ site.author_url }}" target="_blank">{{ site.author }}</a> &middot; Université de Montréal / Mila - Quebec AI Institute</p>
+      <p class="course-code"><a href="{{ '/' | relative_url }}">Robot Learning</a></p>
+      <h1>{{ page.title }}</h1>
     </div>
     <div class="header-links">
       <a class="btn btn-primary" href="{{ site.youtube_playlist }}" target="_blank">
@@ -34,7 +29,9 @@
 </header>
 
 <main>
-  {{ content }}
+  <div class="container page-body">
+    {{ content }}
+  </div>
 </main>
 
 <footer>

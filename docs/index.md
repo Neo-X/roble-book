@@ -14,6 +14,16 @@ Slides and book chapters are drawn from three years of the graduate course at Un
 </div>
 </section>
 
+<section class="wip-notice">
+<div class="container">
+<p>
+  <strong>Programming assignments</strong> for this course are available on
+  <a href="https://github.com/milarobotlearningcourse" target="_blank">GitHub (milarobotlearningcourse)</a>.
+  Note that the assignments are a work in progress and will continue to be updated.
+</p>
+</div>
+</section>
+
 <section class="lectures-section">
 <div class="container">
 

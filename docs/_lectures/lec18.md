@@ -2,10 +2,13 @@
 num: "18"
 title: "Sim-to-Real Transfer"
 track: "Transfer & Generalization"
-youtube_id:
+youtube_id: "ItDjkBmiyc0"
 slides_url: "https://drive.google.com/file/d/1T6exd3THou-uyq-937ybILeTn1RJRNOv/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://www.science.org/doi/10.1126/scirobotics.adi8022"
+  - url: "https://arxiv.org/abs/2406.09246"
 description: >
   Training in simulation and deploying on real hardware. Covers the reality gap,
   domain randomization, system identification, and adaptive methods that close the gap

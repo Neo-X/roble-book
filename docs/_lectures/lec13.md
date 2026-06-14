@@ -6,6 +6,11 @@ youtube_id:
 slides_url:
 colab_url:
 chapter_url:
+readings:
+  - url: "https://arxiv.org/abs/2103.14295"
+  - url: "https://arxiv.org/abs/1710.06537"
+  - url: "https://arxiv.org/abs/1808.00177"
+  - url: "https://arxiv.org/abs/1901.08652"
 description: >
   Inverse reinforcement learning and reward learning from demonstrations and preference comparisons.
   Covers MaxEnt IRL, preference-based reward learning (RLHF), and the connection to both

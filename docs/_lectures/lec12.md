@@ -2,10 +2,14 @@
 num: "12"
 title: "Visual Goal-Conditioned RL"
 track: "Goal-Conditioned & Language-Guided RL"
-youtube_id:
+youtube_id: "LIjF7-sPUUw"
 slides_url: "https://drive.google.com/file/d/1oMsDHolKoONUMHOoXMYrG-RumWcuxEL-/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "http://proceedings.mlr.press/v100/nair20a.html"
+  - url: "https://arxiv.org/abs/2104.11707"
+  - url: "https://arxiv.org/abs/2407.00278"
 description: >
   Extending goal-conditioned RL to image-based goals. Covers representation learning
   for visual goals, contrastive methods, and how to specify desired robot configurations

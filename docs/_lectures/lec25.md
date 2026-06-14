@@ -2,10 +2,15 @@
 num: "25"
 title: "Data Collection for Robotics"
 track: "Behavior Cloning & Imitation"
-youtube_id:
+youtube_id: "o0LR44I1dKI"
 slides_url: "https://drive.google.com/file/d/1zkQKAjzYtE4Ohcw2EfRNvK69gpRqGHfH/view"
 colab_url:
 chapter_url:
+readings:
+  - url: "https://arxiv.org/abs/2308.12952"
+  - url: "https://droid-dataset.github.io/"
+  - url: "https://openaccess.thecvf.com/content_ECCV_2018/html/Dima_Damen_Scaling_Egocentric_Vision_ECCV_2018_paper.html"
+  - url: "https://arxiv.org/abs/2402.10329"
 description: >
   Data collection strategies for robot learning at scale: teleoperation interfaces,
   crowdsourcing, robot-assisted data collection, and the design principles behind

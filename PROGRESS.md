@@ -11,6 +11,16 @@
 - [x] Gemfile pinned to Jekyll 4.2.1 (matching `neo-x.github.io`) with gems installed locally via `vendor/bundle`
 - [x] `.gitignore` excludes `vendor/`, `_site/`, `.jekyll-cache/`
 - [x] Local build confirmed working (`bundle exec jekyll build --baseurl ""`)
+- [x] Readings imported from Notion CSV into lecture front matter (`readings:` list with `required: true` flags)
+- [x] Reading summary Overleaf template linked on every lecture page
+- [x] Assignments button in header links to `https://github.com/milarobotlearningcourse` with WIP badge
+- [x] Course info pages drafted from Notion export and saved (unpublished) for future use:
+  - `docs/faq.md` — Piazza/Discord guidelines and regrade policy
+  - `docs/course-project.md` — project scope, team expectations, grading, probation policy
+  - `docs/resources.md` — textbooks, courses, environments
+  - `docs/ai-policy.md` — generative AI usage rules
+  - `docs/assignments.md` — programming assignment overview and late policy
+  - All four (faq, course-project, resources, ai-policy) have `published: false`; add to site when ready
 
 ## In Progress
 
@@ -20,8 +30,9 @@
 ## To Do
 
 ### Content
+- [ ] **Actor-Critic (lec07)** — slides already exist; find the older recorded lecture and add to site. Once video ID is known, restore `docs/_lectures/lec07.md` with `slides_url` and `youtube_id`.
 - [ ] Add remaining slide PDFs to Google Drive and link into lectures missing `slides_url`:
-  lec02, lec07, lec10, lec12b, lec13, lec15, lec19, lec21, lec23, lec24
+  lec02, lec10, lec12b, lec13, lec19
 - [ ] Add chapter PDF links as textbook chapters are completed
 - [ ] Add course syllabus / schedule page
 

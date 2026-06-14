@@ -2,10 +2,16 @@
 num: "08"
 title: "Q-Learning"
 track: "Value-Based Methods"
-youtube_id:
+youtube_id: "_gycCp5aJTY"
+youtube_id_2: "VkR3m5X7MjU"
 slides_url: "https://drive.google.com/file/d/13wAwTqii3ClJ8PLBXno8OzvvEghaj4eD/view"
 colab_url: "https://colab.research.google.com/drive/11WE75q-8yQCp_ShvVeFiP7KRb7fb-Wo6"
 chapter_url:
+readings:
+  - url: "https://arxiv.org/abs/1312.5602"
+  - url: "https://ojs.aaai.org/index.php/AAAI/article/view/10295"
+  - url: "http://incompleteideas.net/book/RLbook2020.pdf"
+  - url: "https://arxiv.org/abs/1812.02648"
 description: >
   From bandit problems to DQN. Derives the Bellman equation, develops Q-learning,
   and covers the deep RL innovations — experience replay and target networks — that

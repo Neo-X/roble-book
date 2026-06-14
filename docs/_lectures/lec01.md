@@ -2,10 +2,18 @@
 num: "01"
 title: "Supervised Learning & Behavior Cloning"
 track: "Behavior Cloning & Imitation"
-youtube_id:
+youtube_id: "5hNxQ1l_Ago"
 slides_url: "https://drive.google.com/file/d/1VvM-1-PcuYcd7oLJYQEIv8-XBQrNAM6n/view"
 colab_url: "https://colab.research.google.com/drive/1QY29NpcIqkKMGoslbXdSzs_o3CPraHl7"
 chapter_url:
+readings:
+  - url: "http://proceedings.mlr.press/v15/ross11a"
+    required: true
+  - url: "https://arxiv.org/abs/2304.13705"
+  - url: "https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf"
+  - url: "https://dhiraj100892.github.io/Visual-Imitation-Made-Easy/"
+  - url: "https://sites.google.com/view/bc-z/home"
+  - url: "https://arxiv.org/abs/2209.05451"
 description: >
   Behavior cloning as supervised learning on state–action pairs.
   Covers the distribution shift problem — why a policy trained on expert data fails when it makes
