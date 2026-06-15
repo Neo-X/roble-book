@@ -1,10 +1,10 @@
 title: "Robot Learning"
-description: "Graduate lecture notes, slides, and recordings covering RL and deep learning for robotics."
+description: "Lecture notes, slides, and recordings covering RL and deep learning for robotics."
 author: "Glen Berseth"
 email: "glen.berseth@mila.quebec"
 github_username: Neo-X
-baseurl: "/roble-book"
-url: "https://neo-x.github.io"
+baseurl: ""
+url: "https://robotlearningbook.com"
 
 youtube_playlist: "https://youtube.com/playlist?list=PLMe2pHxzxHp-UJ1jd-uuGSGK7P7Phtm-f"
 author_url: "https://fracturedplane.com/"

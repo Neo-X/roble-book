@@ -328,6 +328,16 @@ a.card-link:hover { text-decoration: none; }
 }
 .nav-back:hover { text-decoration: none; opacity: .8; }
 
+/* ── Changelog ── */
+.changelog {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 0;
+}
+.changelog h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+.changelog ul { list-style: none; padding: 0; }
+.changelog li { font-size: .9rem; color: var(--muted); padding: .3rem 0; }
+.changelog li strong { color: var(--text); }
+
 /* ── Site nav ── */
 .site-nav {
   background: #1e3a4f;

@@ -61,3 +61,12 @@ Slides and book chapters are drawn from three years of the graduate course at Un
 
 </div>
 </section>
+
+<section class="changelog">
+<div class="container">
+<h2>Changelog</h2>
+<ul>
+  <li><strong>2026-06-14</strong> — Initial website launch with lecture slides, videos, and readings.</li>
+</ul>
+</div>
+</section>
