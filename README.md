@@ -4,6 +4,15 @@ GitHub Pages site for Glen Berseth's Robot Learning course (Université de Montr
 
 **Live site:** https://neo-x.github.io/roble-book/
 
+## Local Development
+
+```bash
+cd docs
+bundle install          # first time only
+bundle exec jekyll serve --baseurl ""
+# → open http://localhost:4000
+```
+
 ## Enabling GitHub Pages
 
 1. Push this repo to GitHub.
