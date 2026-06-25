@@ -101,7 +101,7 @@
         {% for r in page.readings %}
         <li>
           {% if r.required %}<span class="required-badge">required</span> {% endif %}
-          <a href="{{ r.url }}" target="_blank">{{ r.url }}</a>
+          <a href="{{ r.url }}" target="_blank">{% if r.title %}{{ r.title }}{% else %}{{ r.url }}{% endif %}</a>
         </li>
         {% endfor %}
       </ul>
