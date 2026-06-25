@@ -8,9 +8,12 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/2002.05700"
+    title: "BADGR: An Autonomous Self-Supervised Learning-Based Navigation System"
     required: true
   - url: "https://discovery.ucl.ac.uk/id/eprint/10045895/1/agz_unformatted_nature.pdf"
+    title: "Mastering the Game of Go without Human Knowledge"
   - url: "https://arxiv.org/pdf/2302.00111"
+    title: "Learning Universal Policies via Text-Guided Video Generation"
     required: true
 description: >
   Classical planning and optimal control: dynamic programming, LQR, and trajectory optimization.

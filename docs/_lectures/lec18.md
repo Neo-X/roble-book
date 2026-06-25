@@ -8,7 +8,9 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://www.science.org/doi/10.1126/scirobotics.adi8022"
+    title: "Open X-Embodiment: Robotic Learning Datasets and RT-X Models"
   - url: "https://arxiv.org/abs/2406.09246"
+    title: "OpenVLA: An Open-Source Vision-Language-Action Model"
 description: >
   Training in simulation and deploying on real hardware. Covers the reality gap,
   domain randomization, system identification, and adaptive methods that close the gap

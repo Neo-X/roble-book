@@ -9,8 +9,11 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://www.nature.com/articles/s41586-019-1724-z"
+    title: "Grandmaster level in StarCraft II using multi-agent reinforcement learning"
   - url: "https://arxiv.org/pdf/1910.07113"
+    title: "Solving Rubik's Cube with a Robot Hand"
   - url: "https://openreview.net/forum?id=KdVLK0Wo5z"
+    title: "PoliFormer: Scaling On-Policy RL with Transformers Results in Masterful Navigators"
 description: >
   Value function methods beyond Q-learning: soft actor-critic, distributional RL,
   and the connections between policy gradients and value-based methods that lead

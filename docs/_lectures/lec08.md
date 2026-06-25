@@ -9,9 +9,13 @@ colab_url: "https://colab.research.google.com/drive/11WE75q-8yQCp_ShvVeFiP7KRb7f
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/1312.5602"
+    title: "Playing Atari with Deep Reinforcement Learning"
   - url: "https://ojs.aaai.org/index.php/AAAI/article/view/10295"
+    title: "Deep Reinforcement Learning with Double Q-Learning"
   - url: "http://incompleteideas.net/book/RLbook2020.pdf"
+    title: "Reinforcement Learning: An Introduction"
   - url: "https://arxiv.org/abs/1812.02648"
+    title: "Deep Reinforcement Learning and the Deadly Triad"
 description: >
   From bandit problems to DQN. Derives the Bellman equation, develops Q-learning,
   and covers the deep RL innovations — experience replay and target networks — that

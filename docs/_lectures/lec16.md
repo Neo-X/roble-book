@@ -8,10 +8,15 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/1706.02275"
+    title: "Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments"
   - url: "https://arxiv.org/abs/1710.03748"
+    title: "Emergent Complexity via Multi-Agent Competition"
   - url: "https://deepmind.com/blog/article/capture-the-flag-science"
+    title: "Capture the Flag: the emergence of complex cooperative agents"
   - url: "https://openai.com/five/"
+    title: "OpenAI Five"
   - url: "https://rlhfbook.com/"
+    title: "Reinforcement Learning from Human Feedback and LLM Post-Training"
 description: >
   Multi-agent reinforcement learning: cooperative, competitive, and mixed settings.
   How robots can learn to interact with and assist humans, including models of human

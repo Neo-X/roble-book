@@ -8,8 +8,11 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/2206.12279"
+    title: "AnyMorph: Learning Transferable Polices By Inferring Agent Morphology"
   - url: "https://arxiv.org/abs/2203.11931"
+    title: "MetaMorph: Learning Universal Controllers with Transformers"
   - url: "https://openreview.net/forum?id=PbQOZntuXO"
+    title: "One Policy to Run Them All: an End-to-end Learning Approach to Multi-Embodiment Locomotion"
 description: >
   Generalization across tasks, objects, and environments. Meta-learning, multi-task learning,
   and how large pretrained vision and language models can provide transferable representations

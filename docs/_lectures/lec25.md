@@ -8,9 +8,13 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/2308.12952"
+    title: "BridgeData V2: A Dataset for Robot Learning at Scale"
   - url: "https://droid-dataset.github.io/"
+    title: "DROID: A Large-Scale In-the-Wild Robot Manipulation Dataset"
   - url: "https://openaccess.thecvf.com/content_ECCV_2018/html/Dima_Damen_Scaling_Egocentric_Vision_ECCV_2018_paper.html"
+    title: "Scaling Egocentric Vision: The EPIC-KITCHENS Dataset"
   - url: "https://arxiv.org/abs/2402.10329"
+    title: "Universal Manipulation Interface: In-The-Wild Robot Teaching Without In-The-Wild Robots"
 description: >
   Data collection strategies for robot learning at scale: teleoperation interfaces,
   crowdsourcing, robot-assisted data collection, and the design principles behind

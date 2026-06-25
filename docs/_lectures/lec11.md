@@ -8,9 +8,13 @@ colab_url:
 chapter_url:
 readings:
   - url: "http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.51.3077&rep=rep1&type=pdf"
+    title: "Q-learning"
   - url: "https://proceedings.neurips.cc/paper/2017/hash/453fadbd8a1a3af50a9df4df899537b5-Abstract.html"
+    title: "Hindsight Experience Replay"
   - url: "https://arxiv.org/pdf/1606.05312.pdf"
+    title: "Successor Features for Transfer in Reinforcement Learning"
   - url: "https://arxiv.org/abs/2104.11707"
+    title: "DisCo RL: Distribution-Conditioned Reinforcement Learning for General-Purpose Policies"
 description: >
   Goal-conditioned policies that generalize across tasks by conditioning on a desired goal state.
   Covers Hindsight Experience Replay (HER) as a key technique for learning from sparse rewards

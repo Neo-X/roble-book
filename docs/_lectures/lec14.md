@@ -8,9 +8,13 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://dl.acm.org/doi/10.1145/3072959.3073602"
+    title: "DeepLoco: Dynamic Locomotion Skills Using Hierarchical Deep Reinforcement Learning"
   - url: "https://proceedings.neurips.cc/paper/2018/hash/e6384711491713d29bc63fc5eeb5ba4f-Abstract.html"
+    title: "Data-Efficient Hierarchical Reinforcement Learning"
   - url: "https://thegradient.pub/the-promise-of-hierarchical-reinforcement-learning/"
+    title: "The Promise of Hierarchical Reinforcement Learning"
   - url: "https://progprompt.github.io/"
+    title: "ProgPrompt: Generating Situated Robot Task Plans using Large Language Models"
 description: >
   Temporal abstraction and hierarchical planning. The options framework, subgoal discovery,
   and motor primitives for structuring long-horizon tasks into manageable sub-problems.

@@ -8,9 +8,12 @@ colab_url: "https://colab.research.google.com/drive/1YvcYgDveePA3I9n1U5Ne0sXqnZ6
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/1709.10489"
+    title: "Self-supervised Deep Reinforcement Learning with Generalized Computation Graphs for Robot Navigation"
     required: true
   - url: "https://arxiv.org/abs/1710.02298"
+    title: "Rainbow: Combining Improvements in Deep Reinforcement Learning"
   - url: "https://arxiv.org/abs/1611.05397"
+    title: "Reinforcement Learning with Unsupervised Auxiliary Tasks"
 description: >
   Using learned dynamics models for policy improvement — including MBPO, probabilistic ensembles,
   and model-based policy optimization. Contrasts sample efficiency gains against the bias

@@ -8,8 +8,11 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://eureka-research.github.io/"
+    title: "Eureka: Human-Level Reward Design via Coding Large Language Models"
   - url: "https://arxiv.org/abs/2310.12921"
+    title: "Vision-Language Models are Zero-Shot Reward Models for Reinforcement Learning"
   - url: "https://arxiv.org/abs/2411.04549"
+    title: "Vision Language Models are In-Context Value Learners"
 description: >
   Using large language models to specify, generate, and shape reward functions.
   Covers EUREKA, Text2Reward, VLM-based reward labeling, and the broader question

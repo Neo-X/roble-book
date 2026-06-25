@@ -8,9 +8,13 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/2103.14295"
+    title: "Reinforcement Learning for Robust Parameterized Locomotion Control of Bipedal Robots"
   - url: "https://arxiv.org/abs/1710.06537"
+    title: "Sim-to-Real Transfer of Robotic Control with Dynamics Randomization"
   - url: "https://arxiv.org/abs/1808.00177"
+    title: "Learning Dexterous In-Hand Manipulation"
   - url: "https://arxiv.org/abs/1901.08652"
+    title: "Learning agile and dynamic motor skills for legged robots"
 description: >
   Inverse reinforcement learning and reward learning from demonstrations and preference comparisons.
   Covers MaxEnt IRL, preference-based reward learning (RLHF), and the connection to both

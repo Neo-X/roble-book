@@ -9,11 +9,17 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://link.springer.com/article/10.1007%2FBF00992696"
+    title: "Simple statistical gradient-following algorithms for connectionist reinforcement learning"
   - url: "https://proceedings.neurips.cc/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf"
+    title: "Policy Gradient Methods for Reinforcement Learning with Function Approximation"
   - url: "https://arxiv.org/abs/1502.05477"
+    title: "Trust Region Policy Optimization"
   - url: "https://arxiv.org/abs/1506.02438"
+    title: "High-Dimensional Continuous Control Using Generalized Advantage Estimation"
   - url: "https://arxiv.org/abs/1707.06347"
+    title: "Proximal Policy Optimization Algorithms"
   - url: "https://arxiv.org/abs/1602.01783"
+    title: "Asynchronous Methods for Deep Reinforcement Learning"
 description: >
   REINFORCE and the policy gradient theorem. Derives the gradient estimator directly from
   the objective, then covers variance reduction techniques including baselines and causality,

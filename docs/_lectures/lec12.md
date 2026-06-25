@@ -8,8 +8,11 @@ colab_url:
 chapter_url:
 readings:
   - url: "http://proceedings.mlr.press/v100/nair20a.html"
+    title: "Contextual Imagined Goals for Self-Supervised Robotic Learning"
   - url: "https://arxiv.org/abs/2104.11707"
+    title: "DisCo RL: Distribution-Conditioned Reinforcement Learning for General-Purpose Policies"
   - url: "https://arxiv.org/abs/2407.00278"
+    title: "PerAct2: Benchmarking and Learning for Robotic Bimanual Manipulation Tasks"
 description: >
   Extending goal-conditioned RL to image-based goals. Covers representation learning
   for visual goals, contrastive methods, and how to specify desired robot configurations

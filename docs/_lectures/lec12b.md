@@ -8,22 +8,22 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://arxiv.org/abs/2307.15818"
-    title: "Language to Rewards for Robotic Skill Synthesis"
+    title: "RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control"
     required: true
   - url: "https://arxiv.org/abs/2204.01691"
-    title: "Do As I Can, Not As I Say: Grounding Language in Robotic Affordances (SayCan)"
+    title: "Do As I Can, Not As I Say: Grounding Language in Robotic Affordances"
     required: true
   - url: "https://arxiv.org/abs/2209.05451"
-    title: "RT-1: Robotics Transformer for Real-World Control at Scale"
+    title: "Perceiver-Actor: A Multi-Task Transformer for Robotic Manipulation"
     required: true
   - url: "https://arxiv.org/abs/2104.11707"
-    title: "CLIPort: What and Where Pathways for Robotic Manipulation"
+    title: "DisCo RL: Distribution-Conditioned Reinforcement Learning for General-Purpose Policies"
     required: true
   - url: "http://arxiv.org/abs/1910.11670"
-    title: "Language as an Abstraction for Hierarchical Deep Reinforcement Learning"
+    title: "Contextual Imagined Goals for Self-Supervised Robotic Learning"
     required: true
   - url: "https://arxiv.org/abs/2103.00020"
-    title: "Learning Transferable Visual Models From Natural Language Supervision (CLIP)"
+    title: "Learning Transferable Visual Models From Natural Language Supervision"
 description: >
   Using natural language as the goal specification modality. Covers grounding language
   in robot perception, language-conditioned imitation, and the connection to large

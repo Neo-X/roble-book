@@ -9,13 +9,19 @@ colab_url:
 chapter_url:
 readings:
   - url: "https://core.ac.uk/download/pdf/17294935.pdf"
+    title: "Q-learning"
     required: true
   - url: "https://arxiv.org/abs/1805.12114"
+    title: "Deep Reinforcement Learning in a Handful of Trials using Probabilistic Dynamics Models"
   - url: "https://arxiv.org/abs/1912.01603"
+    title: "Dream to Control: Learning Behaviors by Latent Imagination"
   - url: "https://arxiv.org/abs/2206.14176"
+    title: "DayDreamer: World Models for Physical Robot Learning"
   - url: "https://arxiv.org/abs/2402.15391"
+    title: "Genie: Generative Interactive Environments"
     required: true
   - url: "https://arxiv.org/abs/2306.17582"
+    title: "ChatGPT for Robotics: Design Principles and Model Abilities"
 description: >
   Learning to plan by combining learned world models with planning algorithms.
   Covers differentiable planning, neural network dynamics models, and the interplay
