@@ -14,81 +14,68 @@ The slide sources, transcripts, and LaTeX book chapters live in a **companion re
 
 ---
 
+## How to Work With This Repo
+
+See **[README.md](README.md)** for full details on:
+- Local development setup
+- The `buildbook.sh` sync workflow (how to pull chapter content from `../RobotLearningLectures/`)
+- The chapter content structure (`lecXX.md` header files, `text.md` sources, figures, PDFs)
+- How to add a new lecture chapter
+
+Quick reference for common tasks:
+
+| Task | Where to edit |
+|------|--------------|
+| Sync chapter content from source repo | Run `./buildbook.sh` from repo root |
+| Add/change a lecture's metadata or description | `docs/_lectures/lecXX.md` front matter |
+| Wire up a YouTube video ID | `docs/_lectures/lecXX.md` → set `youtube_id:` |
+| Link a slides PDF | `docs/_lectures/lecXX.md` → set `slides_url:` |
+| Link a chapter PDF | `docs/_lectures/lecXX.md` → set `chapter_url:` and `chapter_content_include:` |
+| Change site title / author / playlist URL | `docs/_config.yml` |
+| Change page layout or nav | `docs/_layouts/default.html` |
+| Change lecture page layout | `docs/_layouts/lecture.html` |
+| Change visual styles | `docs/assets/css/style.css` |
+
+## Key Rules
+
+- **Chapter subdirectories (`_lectures/lecXX-Name/`) are never published as pages.** They exist only as source input for the `ChapterGenerator` plugin. Jekyll is configured to suppress them via `defaults` entries in `_config.yml` — one entry per chapter directory. When adding a new chapter via `buildbook.sh`, add a matching `published: false` default to `_config.yml`.
+- **`lecXX.md` files are metadata-only headers.** Do not add prose body content to them. The chapter body is injected by the `lecture.html` layout using the `chapter_content_include` front matter field.
+- **Never edit files under `_lectures/lecXX-Name/` or `assets/chapters/lecXX-Name/` directly.** They are overwritten by `buildbook.sh` on the next sync. Edit the source in `../RobotLearningLectures/` instead.
+
+See **[README.md](README.md)** for the full chapter structure and workflow details.
+
+---
+
 ## Repository Structure
 
 ```
 roble-book/
   CLAUDE.md          ← this file
+  README.md          ← full workflow docs (read this first)
+  buildbook.sh       ← sync content from RobotLearningLectures + build
   PROGRESS.md        ← todo list and milestone tracker
-  README.md          ← setup instructions for GitHub Pages
   .gitignore
   docs/              ← Jekyll site root (GitHub Pages serves from here)
     _config.yml      ← site metadata, collection config, gem settings
-    Gemfile          ← Ruby gem versions (Jekyll 4.2.1, minima 2.5)
-    index.md         ← home page (Markdown + Liquid; loops over site.lectures)
-    _lectures/       ← one .md file per lecture (the Jekyll Collection)
+    Gemfile          ← Ruby gem versions
+    index.md         ← home page
+    _lectures/
+      lecXX.md       ← metadata header per lecture (front matter only)
+      lec00-WhatIsRobotLearning/text.md   ← chapter prose (synced by buildbook.sh)
+      lec01-SupervisedLearning/text.md    ← chapter prose (synced by buildbook.sh)
     _layouts/
-      default.html   ← base HTML shell (header, nav, footer)
-      lecture.html   ← individual lecture page (video embed, download buttons)
+      default.html   ← base HTML shell
+      lecture.html   ← individual lecture page
+    _plugins/
+      chapter_generator.rb  ← compiles text.md → _includes/chapters/*-content.html
+    _pandoc/
+      pandoc-svg.py  ← pandoc filter (SVG pass-through for HTML, convert for LaTeX)
     assets/
-      css/style.css  ← all styles
+      css/style.css
+      chapters/
+        lec00-WhatIsRobotLearning/   ← figures/ + chapter.pdf (synced by buildbook.sh)
+        lec01-SupervisedLearning/    ← figures/ + chapter.pdf (synced by buildbook.sh)
 ```
-
----
-
-## The Lectures Collection
-
-Each lecture is a Markdown file in `docs/_lectures/` with YAML front matter:
-
-```markdown
----
-num: "06"
-title: "Policy Gradients"
-track: "Policy Gradient Methods"
-youtube_id:             # part after ?v= in the YouTube watch URL; blank = link to playlist
-slides_url: "https://drive.google.com/file/d/FILEID/view"
-colab_url:              # Colab link if there is a notebook
-chapter_url:            # link to chapter PDF once available
-description: >
-  One-paragraph summary shown on the index card and lecture page header.
----
-
-Markdown body: overview paragraphs, ### Key topics list, etc.
-```
-
-`_config.yml` configures the collection with `output: true` and `permalink: /lectures/:name/`, so Jekyll generates a page at e.g. `/lectures/lec06/` for each file automatically.
-
-The index page (`index.md`) iterates over `site.lectures` sorted by `num`, groups them by `track`, and renders a card grid. Each card links to the lecture's individual page.
-
----
-
-## Local Development
-
-Gems are installed locally into `docs/vendor/bundle` (not system-wide).
-
-```bash
-cd docs
-bundle install          # first time only
-bundle exec jekyll serve --baseurl ""
-# → open http://localhost:4000
-```
-
-The `--baseurl ""` override prevents the `/roble-book` production prefix from breaking local links.
-
----
-
-## Updating Content
-
-| Task | Where to edit |
-|------|--------------|
-| Add/change a lecture description or key topics | `docs/_lectures/lecXX.md` body |
-| Wire up a YouTube video ID | `docs/_lectures/lecXX.md` → set `youtube_id:` |
-| Link a slides PDF | `docs/_lectures/lecXX.md` → set `slides_url:` (use Google Drive view URL) |
-| Link a chapter PDF | `docs/_lectures/lecXX.md` → set `chapter_url:` |
-| Change site title / author / playlist URL | `docs/_config.yml` |
-| Change page layout or nav | `docs/_layouts/default.html` |
-| Change lecture page layout | `docs/_layouts/lecture.html` |
-| Change visual styles | `docs/assets/css/style.css` |
 
 ---
 

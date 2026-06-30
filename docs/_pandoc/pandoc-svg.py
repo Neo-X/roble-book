@@ -75,6 +75,11 @@ def convert_svg(source, fmt):
     if not is_svg or option is None:
         return source
 
+    # HTML browsers render SVG natively; skip inkscape conversion and let
+    # fix_paths (in chapter_generator.rb) rewrite the path to /assets/chapters/.
+    if fmt in ("html", "html5", "html4"):
+        return source
+
     if re.match(r"https?://", source):
         basename = unquote(os.path.basename(source_match))
         basename = re.sub(r"[^a-zA-Z0-9\.]", "", basename)
@@ -82,6 +87,7 @@ def convert_svg(source, fmt):
         base_name, _ = os.path.splitext(basename)
         target = base_name + "." + option[1]
     else:
+        orig_source = source
         base_name, _ = os.path.splitext(source)
         target = os.path.realpath(base_name + "." + option[1])
         source = os.path.realpath(source)
@@ -91,7 +97,13 @@ def convert_svg(source, fmt):
     except OSError:
         target_mtime = -1
 
-    if target_mtime < os.path.getmtime(source):
+    try:
+        source_mtime = os.path.getmtime(source)
+    except OSError:
+        sys.stderr.write(f"pandoc-svg: source not found, skipping: {source}\n")
+        return orig_source
+
+    if target_mtime < source_mtime:
         command = ["inkscape", option[0] + target, source]
         sys.stderr.write(f"Running {' '.join(command)}\n")
         subprocess.run(command, check=False, stdout=sys.stderr, stderr=sys.stderr)

@@ -21,6 +21,19 @@ defaults:
     values:
       layout: lecture
 
+  # Chapter source directories contain text.md files compiled by ChapterGenerator.
+  # They must never be published as standalone pages — they are included into the
+  # lecture pages via chapter_content_include in each lecXX.md header file.
+  # Add one entry here whenever a new chapter directory is added via buildbook.sh.
+  - scope:
+      path: "_lectures/lec00-WhatIsRobotLearning"
+    values:
+      published: false
+  - scope:
+      path: "_lectures/lec01-SupervisedLearning"
+    values:
+      published: false
+
 highlighter: rouge
 encoding: utf-8
 markdown: kramdown

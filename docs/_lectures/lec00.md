@@ -6,7 +6,8 @@ youtube_id: "1ZuvCWvj0HM"
 youtube_id_2: "f7eiPAqFjIw"
 slides_url: "https://drive.google.com/file/d/16liEB8Pd-DBUm5Z41tqeR9sbUZSiqvCr/view"
 colab_url:
-chapter_url:
+chapter_url: "/assets/chapters/lec00-WhatIsRobotLearning/chapter.pdf"
+chapter_content_include: "chapters/lec00-WhatIsRobotLearning-content.html"
 readings:
   - url: "https://arxiv.org/abs/2110.15245"
     title: "From Machine Learning to Robotics: Challenges and Opportunities for Embodied Intelligence"
@@ -23,4 +24,3 @@ description: >
   and surveys foundation models and the scaling of deep RL to real robotic systems.
 ---
 
-{% include chapters/lec00-content.html %}
