@@ -1,0 +1,1964 @@
+<h1 id="motivation">Motivation</h1>
+<figure id="fig:bc-complexity">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/BC-task-complexity.png"
+style="width:90.0%"
+alt="Large Scale Behaviour Cloning (Jang et al. 2022)" />
+<figcaption aria-hidden="true">Large Scale Behaviour Cloning <span
+class="citation" data-cites="Jang2022-uu">(<a href="#ref-Jang2022-uu"
+role="doc-biblioref">Jang et al. 2022</a>)</span></figcaption>
+</figure>
+<p>The central question motivating this chapter is whether a simple
+recipe can serve as the foundation for general robot learning: observe
+what experts do, and copy it. Not all tasks are equally tractable, and
+some are considerably more complex than others, but across nearly all of
+them, humans already possess ideas about how to perform the task. That
+expert knowledge can be recorded as demonstrations. The question then
+becomes whether copying from enough of those demonstrations — what the
+field calls behavior cloning — produces an agent that generalizes
+meaningfully, and how far this paradigm can be pushed before it breaks
+down.</p>
+<p><a href="#fig:bc-complexity">Figure</a> illustrates the scaling
+dimension of the question. The BC-Z system <span class="citation"
+data-cites="Jang2022-uu">(<a href="#ref-Jang2022-uu"
+role="doc-biblioref">Jang et al. 2022</a>)</span> shows a characteristic
+pattern: as the volume and diversity of demonstration data increases,
+behavior cloning begins to handle increasingly complex and varied tasks.
+The figure arranges tasks by difficulty and plots performance as a
+function of scale, making clear that the approach is not fundamentally
+limited to simple, narrow behaviors. This observation motivates the rest
+of the chapter: understanding when and why behavior cloning works, where
+it fails, and what additions are needed to make it a viable foundation
+for large-scale robot learning.</p>
+<h2 id="imitation-learning">Imitation Learning</h2>
+<figure id="fig:vgg16-policy-choice">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/vgg16-policy-choice"
+style="width:70.0%" alt="Imitation Learning for Car driving" />
+<figcaption aria-hidden="true">Imitation Learning for Car
+driving</figcaption>
+</figure>
+<p>Behavior cloning formalizes learning from demonstration as a
+supervised learning problem, and as
+<a href="#fig:bc-complexity">Figure</a> suggests, its appeal grows with
+the scale of available demonstration data. A human expert drives a car,
+and at each timestep the camera observation <span
+class="math inline">\(\textbf{s}_t\)</span> and the steering action
+<span class="math inline">\(\textbf{a}_t\)</span> are recorded, as in
+<a href="#fig:vgg16-policy-choice">Figure</a>. Collecting this across
+many drivers, roads, and weather conditions yields an expert dataset
+<span class="math inline">\(\mathcal{D}= \{(\textbf{s}_t^{\star},
+\textbf{a}_t^{\star})\} \sim d^{\pi^{\star}}\)</span>, where <span
+class="math inline">\(d^{\pi^{\star}}\)</span> is the state distribution
+induced by the expert policy. A neural network policy <span
+class="math inline">\(\pi_\theta\)</span> is then trained to minimize
+the behavioral loss in <a href="#eq:BC-loss">Figure</a>:</p>
+<p><span class="math display">\[\begin{equation} \label{eq:BC-loss}
+\hat{\theta} = \mathop{\mathrm{arg\,min \:}}_{\theta} \sum_{t=1}^{N}
+\ell(\pi_{\theta}, \textbf{s}_t^{\star}, \textbf{a}_t^{\star})
+\end{equation}\]</span></p>
+<p>This is nothing more than supervised learning where each
+(observation, action) pair is treated as a labeled example. No reward
+function is required, and no interaction with the environment is needed
+during training — the expert has already done that work.</p>
+<p>The appeal is obvious: human demonstrations are comparatively cheap
+to collect, and the training procedure is well-understood. With enough
+data across diverse conditions, one might expect the policy to
+generalize. Early large-scale work in autonomous driving <span
+class="citation" data-cites="bojarski2016end">(<a
+href="#ref-bojarski2016end" role="doc-biblioref">Bojarski et al.
+2016</a>)</span> pursued exactly this, collecting millions of miles of
+driving while simultaneously capturing steering corrections. Imitation
+learning for manipulation and locomotion followed a similar trajectory
+<span class="citation"
+data-cites="schaal1999imitation hussein2017imitation">(<a
+href="#ref-schaal1999imitation" role="doc-biblioref">Schaal 1999</a>; <a
+href="#ref-hussein2017imitation" role="doc-biblioref">Hussein et al.
+2017</a>)</span>. Self-driving cars, however, have not become
+ubiquitous, which signals that something more fundamental limits this
+approach — the distribution shift problem explored in the following
+sections.</p>
+<h2 id="how-deep-imitation-learning-began">How Deep Imitation Learning
+Began</h2>
+<figure id="fig:alvinn">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/alvinn.png"
+style="width:80.0%" alt="ALVINN Design" />
+<figcaption aria-hidden="true">ALVINN Design</figcaption>
+</figure>
+<p>The history of imitation learning for autonomous driving begins with
+ALVINN — Autonomous Land Vehicle In a Neural Network <span
+class="citation" data-cites="pomerleau1988alvinn">(<a
+href="#ref-pomerleau1988alvinn" role="doc-biblioref">Pomerleau
+1988</a>)</span> — built at Carnegie Mellon in 1988. The vehicle used a
+camera and laser range finder whose input was reduced to a coarse <span
+class="math inline">\(30 \times 32\)</span> image, fed into a shallow
+neural network that predicted steering angles from human driving
+demonstrations. The resulting system navigated real roads at highway
+speeds. This predates deep learning and is, in retrospect, a remarkably
+early proof of concept that the behavior cloning framework can work.</p>
+<p><a href="#fig:alvinn">Figure</a> shows the ALVINN architecture: a
+single hidden-layer network receiving the retinal image and range map,
+trained by recording the actions of a human driver. The same paradigm
+described in the previous section — collect (observation, action) pairs
+from an expert, minimize prediction error — was already being practiced
+three decades ago.</p>
+<p>The lesson from ALVINN is sobering: despite its early success, the
+approach did not scale to the full complexity of real-world driving. The
+core difficulty is not the model size or data volume alone, but the
+fundamental compounding error problem that the next section
+formalizes.</p>
+<h2 id="why-doesnt-alvinn-work">Why Doesn’t ALVINN Work?</h2>
+<figure id="fig:trajectory-training">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/trajectorytraining.svg"
+style="width:70.0%" alt="Trajectory Training" />
+<figcaption aria-hidden="true">Trajectory Training</figcaption>
+</figure>
+<p>The failure mode of behavior cloning is not a single large error but
+the compounding of many small ones. No neural network achieves zero
+training loss — there is always some residual mismatch between the
+model’s predictions and the expert’s actions. On a single prediction
+this error is small and tolerable. But behavior cloning deploys the
+policy over a sequence of timesteps, and each prediction influences the
+next state.</p>
+<p><a href="#fig:trajectory-training">Figure</a> illustrates the
+dynamics: the expert trajectory (solid line) is the sequence of states
+the policy was trained on. As the deployed policy accumulates small
+errors, it drifts to states not well-covered by the training data. The
+model was never trained on these states, so its predictions there become
+even less accurate. The deviation compounds — small early errors lead to
+larger later ones — until the policy visits states the expert never
+encountered and has no guidance for.</p>
+<p>The distribution of states actually visited during deployment, <span
+class="math inline">\(p(\textbf{s}_t|\pi_\theta)\)</span>, diverges from
+the training distribution <span class="math inline">\(d^{\pi^*}\)</span>
+used to collect <span class="math inline">\(\mathcal{D}\)</span>. This
+is the distribution shift problem: the model is evaluated on inputs
+drawn from a different distribution than the one it was trained on. Any
+machine learning system suffers some performance degradation under
+distribution shift, but the sequential nature of policy deployment makes
+the degradation particularly severe <span class="citation"
+data-cites="anthony1999neural">(<a href="#ref-anthony1999neural"
+role="doc-biblioref">Anthony, Bartlett, et al., n.d.</a>)</span>.</p>
+<h2 id="general-problem-a-difference-of-distributions">General Problem:
+A Difference of Distributions</h2>
+<figure id="fig:distribution-shift">
+<img
+src="/assets/chapters/lec01-SupervisedLearning/figures/distributionChallenges.svg"
+style="width:70.0%" alt="Difference of Distributions" />
+<figcaption aria-hidden="true">Difference of Distributions</figcaption>
+</figure>
+<p>The core problem is that the learning algorithm has access to the
+expert’s <em>data</em> but not the expert’s <em>model</em>. The expert
+policy <span class="math inline">\(\pi^*\)</span> produced the dataset
+<span class="math inline">\(\mathcal{D}^* = \{\textbf{o}_0,
+\textbf{a}_0, \ldots, \textbf{o}_N, \textbf{a}_N\}\)</span> by
+interacting with the world from a particular initial distribution and
+visitation pattern. The resulting state visitation distribution <span
+class="math inline">\(p(\textbf{o}|\mathcal{D}^*)\)</span> reflects
+where the expert goes.</p>
+<p><a href="#fig:distribution-shift">Figure</a> shows the divergence:
+the expert trajectory remains in a narrow corridor of state space (the
+solid region), while a policy trained via behavior cloning, once
+deployed, drifts into an ever-wider region. The question behavior
+cloning must answer is: how can the agent make <span
+class="math inline">\(p(\textbf{o}|\theta) =
+p(\textbf{o}|\mathcal{D}^*)\)</span>?</p>
+<p>The honest answer is that it cannot — not without matching the expert
+exactly. The agent’s policy is an approximation. Every approximation
+error shifts the trajectory slightly. The shifted trajectory visits
+states outside the training distribution. At those states, the
+approximation error is larger. The trajectory shifts further. This
+feedback loop is what makes behavior cloning fundamentally limited for
+long-horizon tasks, regardless of how much expert data is available.</p>
+<h2 id="behavior-cloning-algorithm">Behavior Cloning Algorithm</h2>
+<p>The behavior cloning algorithm is a direct application of supervised
+learning to the imitation problem. The expert dataset <span
+class="math inline">\(\mathcal{D}^*\)</span> is treated as a labeled
+training set: each observation <span
+class="math inline">\(\textbf{o}_t\)</span> is an input, and the
+corresponding expert action <span
+class="math inline">\(\textbf{a}_t^*\)</span> is the target label. The
+policy <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{o}_t,\theta)\)</span> is
+trained by maximum likelihood on these pairs, then deployed to select
+actions without further modification.</p>
+<p>The algorithm is attractive for its simplicity: no environment
+interaction is needed during training, no reward function must be
+designed, and standard deep learning infrastructure applies directly. It
+is the natural first baseline for any imitation learning problem, and in
+many settings it achieves surprisingly good results — particularly when
+the task is short-horizon, the training distribution is broad, or the
+policy is used only as initialization for a subsequent reinforcement
+learning phase.</p>
+<p>Its limitation is structural. The policy is trained on states from
+<span class="math inline">\(d^{\pi^*}\)</span> and deployed to states
+from its own visitation distribution <span
+class="math inline">\(p(\textbf{o}_t|\pi,\theta)\)</span>. Because <span
+class="math inline">\(\pi \neq \pi^*\)</span>, these distributions
+diverge from the first timestep. The loop labeled “while true” in the
+pseudocode runs the policy in an environment where the policy was never
+trained, and there is no mechanism within the algorithm to recover when
+it encounters unfamiliar territory.</p>
+<h2 id="how-to-make-the-distribution-the-same">How to Make the
+Distribution the Same?</h2>
+<p>DAgger (Dataset Aggregation) <span class="citation"
+data-cites="dagger">(<a href="#ref-dagger" role="doc-biblioref">Ross,
+Gordon, and Bagnell 2011</a>)</span> reframes the distribution shift
+problem as a dataset problem. Instead of asking whether the policy can
+match the expert’s distribution, DAgger asks whether the dataset can be
+grown to include the states the policy actually visits. The key insight
+is that the data shortage is not in the expert’s original demonstrations
+but in the off-trajectory states the learner wanders into.</p>
+<p>The algorithm iterates: (1) train <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{o}_t,\theta)\)</span> on
+the current dataset <span class="math inline">\(\mathcal{D}^*\)</span>;
+(2) roll out the learned policy to generate new trajectories <span
+class="math inline">\(\mathcal{D}_\theta\)</span>, visiting the states
+the current policy actually encounters; (3) ask the expert to label the
+actions <span class="math inline">\(\textbf{a}_t\)</span> for every
+state in <span class="math inline">\(\mathcal{D}_\theta\)</span>; (4)
+aggregate <span class="math inline">\(\mathcal{D}^* \leftarrow
+\mathcal{D}^* \cup \mathcal{D}_\theta\)</span> and repeat. Over
+iterations, the dataset expands to cover the states the policy visits,
+not just the states the expert visited.</p>
+<p>The dataset that accumulates is not merely a collection of expert
+demonstrations but a coverage map of corrective behaviors: expert labels
+for every deviation the student policy makes, and expert labels showing
+how to return from each deviation to the target trajectory. This is
+qualitatively richer than demonstrations alone — it encodes the gradient
+of how to recover, not just the ideal path.</p>
+<p>The price is the labeling requirement. The expert must provide
+actions for states in <span
+class="math inline">\(\mathcal{D}_\theta\)</span> that the expert has
+never visited. For car driving, this means asking a human to annotate
+what the correct action would be when the car is already partially off
+the road — a task that requires expertise and attention, and that scales
+poorly as the policy and task become more complex.</p>
+<h2 id="still-an-issue">Still an Issue</h2>
+<figure id="fig:human-labels-cost">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/NeedHumanLabels.svg"
+style="width:60.0%" alt="Human Expert Data is Expensive" />
+<figcaption aria-hidden="true">Human Expert Data is
+Expensive</figcaption>
+</figure>
+<p>The labeling step in DAgger, shown in
+<a href="#fig:human-labels-cost">Figure</a>, is the practical
+bottleneck. Each iteration of the algorithm requires a human expert to
+annotate every state in the on-policy rollout <span
+class="math inline">\(\mathcal{D}_\theta\)</span>. For complex tasks —
+robot manipulation, surgical assistance, logistics planning — the volume
+of states can be enormous, and the annotations require domain expertise.
+This cost scales with both the number of iterations and the length of
+the rollouts.</p>
+<p>In Tesla’s Autopilot system, a real-world variant of this process
+occurs: whenever a human driver overrides the autopilot, the system logs
+the corrective action and the preceding state. This is crowd-sourced
+DAgger at fleet scale — millions of drivers, each contributing a few
+corrective labels per week. Most organizations cannot replicate this
+data collection infrastructure, making DAgger impractical for domains
+without a large installed base of human-supervised systems.</p>
+<p>The expense of human labeling motivates the inverse dynamics and
+inverse reinforcement learning approaches discussed later in this
+chapter: methods that can extract action labels from observation-only
+data, or that circumvent the labeling requirement entirely by learning a
+reward function and using the environment itself to generate training
+signal.</p>
+<h1 id="now-for-some-theory">Now for Some Theory</h1>
+<h2 id="challenges-for-imitation-learning">Challenges for Imitation
+Learning</h2>
+<p>Three structural challenges limit imitation learning beyond the
+distribution shift problem already discussed.</p>
+<p>First, deep learning is data hungry. Neural network policies require
+large, diverse datasets to generalize. For robotics, the space of
+possible states and tasks is enormous, and the fraction of that space
+covered by any expert dataset is small. Increasing coverage requires
+sustained human effort.</p>
+<p>Second, the human-robot interface introduces systematic error.
+Teleoperation via joystick or keyboard records low-fidelity proxies for
+the demonstrator’s intended behavior: the actions logged are controller
+inputs, not the fine-grained muscle activations and intent that produced
+them. This action-interface mismatch degrades supervision quality
+independently of how much data is collected.</p>
+<p>Third, humans learn autonomously through interaction, not solely by
+observing demonstrations. A human child acquires most skills by doing —
+trying, failing, and adjusting. A system trained purely on static
+demonstrations lacks any mechanism to improve through interaction,
+discover recovery strategies, or adapt to conditions never encountered
+in the training data. Closing this gap motivates the transition from
+pure imitation to reinforcement-based methods discussed in subsequent
+chapters.</p>
+<h2 id="notation-setup">Notation Setup</h2>
+<figure id="fig:vgg16-policy-choice-notation">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/vgg16-policy-choice.svg"
+style="width:70.0%" alt="Imitation Learning for Car driving" />
+<figcaption aria-hidden="true">Imitation Learning for Car
+driving</figcaption>
+</figure>
+<p>Two complementary scalar functions characterize the desirability of a
+state-action pair. The reward function <span
+class="math inline">\(r(\textbf{s}_t,\textbf{a}_t)\)</span> assigns
+higher values to preferred pairs; the cost function <span
+class="math inline">\(c(\textbf{s}_t,\textbf{a}_t)\)</span> assigns
+lower values to preferred pairs. The two conventions are equivalent
+under the sign change <span
+class="math inline">\(r(\textbf{s}_t,\textbf{a}_t) =
+-c(\textbf{s}_t,\textbf{a}_t)\)</span>, and the choice of which to use
+is a matter of convention for the problem at hand.</p>
+<p><span class="math display">\[\begin{align*}
+&amp;= \mathop{\mathrm{arg\,min \:}}_{\theta} \mathbb{E}_{\textbf{a}\sim
+\pi(\textbf{a}| \textbf{s}, \theta),\textbf{s}&#39; \sim
+p(\textbf{s}&#39;| \textbf{a}, \textbf{s}) }
+[ p (\textbf{s}&#39; = \text{accident}) ] &amp;&amp; \text{Expectation
+over policy distribution} \\
+&amp;= \mathop{\mathrm{arg\,min \:}}_{\theta}
+\mathbb{E}_{\textbf{s}_{1:T},\textbf{a}_{1:T}}
+[\sum\limits_{t}^{T} p(\textbf{s}_t = \text{accident}) ] &amp;&amp;
+\text{expectation over trajectories} \\
+&amp;= \mathop{\mathrm{arg\,min \:}}_{\theta}
+\mathbb{E}_{\textbf{s}_{1:T},\textbf{a}_{1:T} }
+[\sum\limits_{t}^{T} c(\textbf{s}_t,\textbf{a}_t) ] &amp;&amp;
+\text{General expectation over any cost}
+\end{align*}\]</span></p>
+<p>For the car driving example of
+<a href="#fig:vgg16-policy-choice-notation">Figure</a>, the objective
+can be written in three equivalent forms. Starting from the most
+concrete — minimize the probability of an accident across all
+trajectories:</p>
+<p><span class="math display">\[\mathop{\mathrm{arg\,min \:}}_{\theta}
+\mathbb{E}_{\textbf{a}\sim
+\pi(\textbf{a}|\textbf{s},\theta),\,\textbf{s}&#39; \sim
+p(\textbf{s}&#39;|\textbf{a},\textbf{s})}\!\left[p(\textbf{s}&#39; =
+\text{accident})\right]\]</span></p>
+<p>This expands to an expectation over complete trajectories, and then
+generalizes to any cost function <span
+class="math inline">\(c(\textbf{s}_t,\textbf{a}_t)\)</span> in place of
+the accident indicator:</p>
+<p><span class="math display">\[\mathop{\mathrm{arg\,min \:}}_{\theta}
+\mathbb{E}_{\textbf{s}_{1:T},\textbf{a}_{1:T}}\!\left[\sum_{t}^{T}
+c(\textbf{s}_t,\textbf{a}_t)\right]\]</span></p>
+<p>This trajectory-level formulation is the standard objective for both
+imitation learning and reinforcement learning. In the imitation setting,
+the cost <span
+class="math inline">\(c(\textbf{s}_t,\textbf{a}_t)\)</span> measures how
+far the agent’s actions deviate from the expert’s.</p>
+<h2 id="imitation-cost-function">Imitation Cost Function</h2>
+<figure id="fig:behaviour-cloning">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/BehaviourCloning.svg"
+style="width:90.0%" alt="Behaviour Cloning" />
+<figcaption aria-hidden="true">Behaviour Cloning</figcaption>
+</figure>
+<p>Two cost functions are commonly used in the analysis of imitation
+learning, both measuring how far the learned policy strays from the
+expert behavior depicted in
+<a href="#fig:behaviour-cloning">Figure</a>.</p>
+<p>The <strong>probabilistic formulation</strong> uses the
+log-likelihood of the expert action under the learned policy:</p>
+<p><span class="math display">\[r(\textbf{s},\textbf{a}) = \log
+p(\textbf{a}= \pi^*(\textbf{s}) \mid \textbf{s})\]</span></p>
+<p>This measures how likely the learned policy is to produce the same
+action as the expert at a given state. It is the log-likelihood
+objective optimized during training and is convenient in practice.</p>
+<p>The <strong>indicator formulation</strong> counts discrete
+mistakes:</p>
+<p><span class="math display">\[c(\textbf{s}_t,\textbf{a}_t) =
+\begin{cases} 0 &amp; \text{if } \textbf{a}_t= \pi^*(\textbf{s}_t) \\ 1
+&amp; \text{otherwise} \end{cases}\]</span></p>
+<p>The indicator cost turns the trajectory objective into a cumulative
+regret: the total number of steps on which the policy disagrees with the
+expert. This formulation is convenient for theoretical analysis because
+it admits clean combinatorial arguments.</p>
+<p>The key subtlety in both formulations is which state distribution the
+expectation is taken over. Behavior cloning minimizes cost under the
+<em>expert’s</em> state distribution <span
+class="math inline">\(d^{\pi^*}\)</span>, because that is where training
+data was collected. But the objective of interest — the cost during
+deployment — evaluates under the <em>learned policy’s</em> state
+distribution <span class="math inline">\(d^{\pi_\theta}\)</span>. These
+two distributions differ whenever <span class="math inline">\(\pi_\theta
+\neq \pi^*\)</span>, and the mismatch is what causes behavior cloning to
+fail at long horizons. DAgger corrects this by collecting training data
+from <span class="math inline">\(d^{\pi_\theta}\)</span>, closing the
+distributional gap iteratively.</p>
+<h2 id="analysis-of-typical-behavior-cloning-case">Analysis of Typical
+Behavior Cloning Case</h2>
+<figure id="fig:tightrope">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/tightRope.svg"
+style="width:60.0%" alt="Tight Rope Walking" />
+<figcaption aria-hidden="true">Tight Rope Walking</figcaption>
+</figure>
+<p>To quantify the failure of pure behavior cloning, assume that for any
+state in the training distribution, the probability of the learned
+policy making a mistake is bounded:</p>
+<p><span class="math display">\[p(\textbf{a}_t\neq
+\pi^*(\textbf{s}_t)|\textbf{s}_t,\theta) \leq \epsilon\]</span></p>
+<p>This is the per-step error rate achievable via supervised learning on
+<span class="math inline">\(\mathcal{D}^*\)</span>. The question is how
+much total cost accumulates over a trajectory of length <span
+class="math inline">\(T\)</span>, sketched in
+<a href="#fig:trajectory-training">Figure</a>.</p>
+<p><a href="#fig:tightrope">Figure</a> provides the analogy: walking a
+tightrope with small per-step error probability. Each step, the agent
+might slip with probability <span
+class="math inline">\(\epsilon\)</span>. Staying on the rope requires
+making no mistakes for <span class="math inline">\(T\)</span>
+consecutive steps, which has probability <span
+class="math inline">\((1-\epsilon)^T \approx 1 - \epsilon T\)</span> —
+vanishingly small for large <span class="math inline">\(T\)</span>.</p>
+<p>Once the agent makes a mistake, it enters a state outside the
+training distribution <span
+class="math inline">\(\mathcal{D}^*\)</span>. From there, the error rate
+is no longer bounded by <span class="math inline">\(\epsilon\)</span>;
+it can be arbitrarily large. The distribution of mistake states <span
+class="math inline">\(p_{\text{mistake}}(\textbf{s}_t)\)</span> is
+unknown and worst-case. In the worst case, a single early mistake sends
+the agent into a region where every subsequent action is wrong.</p>
+<p>The expected cumulative cost under behavior cloning expands by
+conditioning on whether a mistake occurs at each step. A mistake at step
+<span class="math inline">\(t=0\)</span> costs at most <span
+class="math inline">\(T\)</span> steps of regret; a mistake at <span
+class="math inline">\(t=1\)</span> given no prior mistake costs at most
+<span class="math inline">\(T-1\)</span>; and so on:</p>
+<p><span class="math display">\[\mathbb{E}\!\left[\sum_t
+c(\textbf{s}_t,\textbf{a}_t)\right] \leq \epsilon T +
+(1-\epsilon)\!\left(\epsilon(T-1) +
+(1-\epsilon)(\ldots)\right)\]</span></p>
+<p>Summing the <span class="math inline">\(T\)</span> such terms, each
+of order <span class="math inline">\(\mathcal{O}(\epsilon T)\)</span>,
+gives:</p>
+<p><span class="math display">\[\mathbb{E}\!\left[\sum_t
+c(\textbf{s}_t,\textbf{a}_t)\right] \in \mathcal{O}(\epsilon
+T^2)\]</span></p>
+<p>The dominant term is quadratic in <span
+class="math inline">\(T\)</span>: as the task horizon grows, the
+cumulative error grows quadratically with respect to the per-step error
+rate. This means that even a very small per-step error rate <span
+class="math inline">\(\epsilon\)</span> leads to large total cost for
+long-horizon tasks. Halving <span
+class="math inline">\(\epsilon\)</span> through better modeling does not
+halve the deployment cost; it merely shifts the onset of serious failure
+to a somewhat longer horizon.</p>
+<h2 id="improved-dagger-algorithm">Improved Dagger Algorithm</h2>
+<p>The full DAgger algorithm <span class="citation"
+data-cites="dagger">(<a href="#ref-dagger" role="doc-biblioref">Ross,
+Gordon, and Bagnell 2011</a>)</span> formalizes the dataset aggregation
+process with a mixing parameter <span
+class="math inline">\(\beta_i\)</span> that controls the transition from
+expert-guided to learner-guided exploration. At iteration <span
+class="math inline">\(i\)</span>, the policy used for data collection is
+a mixture:</p>
+<p><span class="math display">\[\pi_i = \beta_i \pi^* + (1 -
+\beta_i)\hat\pi_i\]</span></p>
+<p>When <span class="math inline">\(\beta_i = 1\)</span>, only the
+expert acts; when <span class="math inline">\(\beta_i = 0\)</span>, only
+the learned policy acts. As <span class="math inline">\(i\)</span>
+increases, <span class="math inline">\(\beta_i\)</span> is annealed
+toward zero, so the agent gradually takes over. At first, the expert
+acts nearly all the time, providing clean demonstrations. As <span
+class="math inline">\(\beta_i\)</span> decreases, the agent acts for
+longer stretches, and the expert steps in only to provide corrective
+labels.</p>
+<p>This schedule is crucial for building a dataset that covers both
+near-expert trajectories and recovery behaviors. Early iterations
+capture high-quality demonstrations; later iterations capture the
+long-range deviations and corrections that simple imitation misses. The
+aggregated dataset <span class="math inline">\(D\)</span> after <span
+class="math inline">\(N\)</span> iterations contains the state
+distribution of every mixed policy used across all iterations, which
+converges to covering the learned policy’s own visitation
+distribution.</p>
+<p>The algorithm returns the best <span
+class="math inline">\(\pi_i\)</span> on a held-out validation set,
+rather than the final iterate, since individual iterations may overfit
+the states seen in that batch.</p>
+<h2 id="dagger-analysis">Dagger Analysis</h2>
+<p>DAgger — short for Dataset Aggregator — is formalized as a reduction
+to no-regret online learning. At each round <span
+class="math inline">\(i\)</span>, a policy <span
+class="math inline">\(\hat\pi_i\)</span> is selected and used to collect
+data; the loss is the per-step imitation cost <span
+class="math inline">\(l(s,\hat\pi)\)</span> under the induced state
+distribution <span class="math inline">\(d_{\hat\pi}\)</span>. The key
+parameters in the analysis are: <span class="math inline">\(N\)</span>,
+the total number of learning iterations (equivalently, the number of
+distinct policies trained); <span
+class="math inline">\(\beta_i\)</span>, the probability of selecting an
+action from the expert <span class="math inline">\(\pi^*\)</span> at
+iteration <span class="math inline">\(i\)</span>; <span
+class="math inline">\(\gamma_N\)</span>, the average regret of the
+sequence <span class="math inline">\(\hat\pi_{1:N}\)</span> relative to
+the best fixed policy in hindsight; and <span
+class="math inline">\(T\)</span>, the trajectory length.</p>
+<p>For the full DAgger bound in the infinite-data case, the expected
+loss of the best policy found satisfies:</p>
+<p><span class="math display">\[\mathbb{E}_{s \sim
+d_{\hat\pi}}\!\left[l(s, \hat\pi)\right] \leq \epsilon_N + \gamma_N +
+\frac{2 l_{\text{max}}}{N}\!\left[n_\beta + T \sum_{i=n_\beta+1}^{N}
+\beta_i\right]\]</span></p>
+<p>Here <span class="math inline">\(\epsilon_N\)</span> is the
+supervised learning error achieved after <span
+class="math inline">\(N\)</span> iterations of training on the
+aggregated dataset, <span class="math inline">\(l_{\text{max}}\)</span>
+is the maximum possible per-step cost, and <span
+class="math inline">\(n_\beta\)</span> is the number of iterations for
+which <span class="math inline">\(\beta_i &gt; 0\)</span> (iterations
+where the expert still acts). The remaining sum <span
+class="math inline">\(T\sum_{i=n_\beta+1}^{N}\beta_i\)</span> penalizes
+any residual mixing with the expert after the schedule has nominally
+reached <span class="math inline">\(\beta_i = 0\)</span> — once the
+agent is supposed to act autonomously, lingering expert influence slows
+convergence.</p>
+<p>In the finite-sample case, where only <span
+class="math inline">\(m\)</span> trajectories are collected per
+iteration, a statistical estimation term appears:</p>
+<p><span class="math display">\[\mathbb{E}_{s \sim
+d_{\hat\pi}}\!\left[l(s, \hat\pi)\right] \leq \epsilon_N + \gamma_N +
+\frac{2 l_{\text{max}}}{N}\!\left[n_\beta + T \sum_{i=n_\beta+1}^{N}
+\beta_i\right] +
+l_{\text{max}}\sqrt{\frac{2\log(1/\delta)}{mN}}\]</span></p>
+<p>The additional term <span
+class="math inline">\(l_{\text{max}}\sqrt{2\log(1/\delta)/(mN)}\)</span>
+accounts for the statistical error from estimating the per-iteration
+loss on only <span class="math inline">\(m\)</span> samples, with <span
+class="math inline">\(\delta\)</span> as the failure probability.
+Collecting more trajectories per iteration (larger <span
+class="math inline">\(m\)</span>) or running more iterations (larger
+<span class="math inline">\(N\)</span>) both drive this term toward
+zero.</p>
+<p>To interpret the bound, consider the limits of each parameter. As
+<span class="math inline">\(N \to \infty\)</span> and <span
+class="math inline">\(\beta_i \to 0\)</span>, the third and fourth terms
+vanish, and the bound approaches <span class="math inline">\(\epsilon_N
++ \gamma_N\)</span>. This is a linear function of <span
+class="math inline">\(T\)</span> through <span
+class="math inline">\(\epsilon_N\)</span> — a fundamental improvement
+over the <span class="math inline">\(\mathcal{O}(\epsilon T^2)\)</span>
+scaling of pure behavior cloning. Increasing <span
+class="math inline">\(T\)</span> makes the problem harder for behavior
+cloning quadratically; under DAgger, the dependence on <span
+class="math inline">\(T\)</span> is absorbed into <span
+class="math inline">\(\epsilon_N\)</span>, which is controlled by how
+well the supervised learning step fits the aggregated data. As <span
+class="math inline">\(m\)</span> increases, the statistical term
+shrinks. As <span class="math inline">\(\beta_i \to 0\)</span> at all
+but the first few iterations, the mixing penalty disappears. The bound
+thus degrades gracefully with finite resources and approaches the
+fundamental limit set by the online learning regret <span
+class="math inline">\(\gamma_N\)</span>.</p>
+<h2 id="history-of-improvements">History of Improvements</h2>
+<figure id="fig:imitation-history">
+<img
+src="/assets/chapters/lec01-SupervisedLearning/figures/imitationLearningHistory.png"
+style="width:90.0%"
+alt="Imitation Learning History (Zheng et al. 2022)" />
+<figcaption aria-hidden="true">Imitation Learning History <span
+class="citation" data-cites="zheng2022imitation">(<a
+href="#ref-zheng2022imitation" role="doc-biblioref">Zheng et al.
+2022</a>)</span></figcaption>
+</figure>
+<p><a href="#fig:imitation-history">Figure</a> traces the development of
+imitation learning methods over several decades <span class="citation"
+data-cites="zheng2022imitation">(<a href="#ref-zheng2022imitation"
+role="doc-biblioref">Zheng et al. 2022</a>)</span>. The progression
+reveals a recurring pattern: each generation of methods identifies a
+specific failure mode of its predecessors and proposes a structural
+fix.</p>
+<p>Behavior cloning (1990s) established the supervised learning
+framework but exposed the distribution shift problem. DAgger (2011)
+addressed distribution shift by collecting on-policy corrections, at the
+cost of requiring interactive expert labeling. Inverse reinforcement
+learning approaches (mid-2010s) replaced the need for direct action
+supervision with reward learning, enabling the agent to generalize
+beyond the demonstrations. Adversarial imitation methods (GAIL, 2016)
+reframed the problem as distribution matching, connecting imitation to
+generative adversarial training. The most recent era is characterized by
+large-scale behavior cloning — RT-1, BC-Z, and related work — which
+returns to the basic BC formulation but applies it at data and model
+scales that were previously impractical, achieving generalization that
+earlier small-scale BC could not.</p>
+<p>The history shows that no single approach has rendered the others
+obsolete. Each occupies a different point in the tradeoff between data
+cost (does it require interactive expert labeling?), distribution
+coverage (how well does it generalize?), and sample complexity (how much
+data does it require?).</p>
+<h1 id="deep-imitation-learning-in-practice">Deep Imitation Learning In
+Practice</h1>
+<figure id="fig:looksokayelsewhere">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/looksOkayElsewhere.svg"
+style="width:70.0%" alt="What could go wrong" />
+<figcaption aria-hidden="true">What could go wrong</figcaption>
+</figure>
+<h2 id="deep-imitation-learning-in-practice-1">Deep Imitation Learning
+In Practice</h2>
+<p>Even after addressing distribution shift with DAgger, several deeper
+failure modes remain, and as
+<a href="#fig:looksokayelsewhere">Figure</a> warns, a policy that looks
+fine in one setting can fail badly elsewhere.</p>
+<p>The Markovian assumption holds that the optimal action at time <span
+class="math inline">\(t\)</span> depends only on the current state <span
+class="math inline">\(\textbf{s}_t\)</span>, not on the history of
+states and actions that preceded it. In practice, this assumption is
+frequently violated. A robot picking up an object needs to know which
+object it already grasped, not just what it currently sees. An agent
+navigating a building needs to track which rooms it has visited. When
+the current observation does not uniquely determine the optimal action,
+conditioning only on <span class="math inline">\(\textbf{o}_t\)</span>
+forces the policy to make ambiguous decisions.</p>
+<p>Causal confusion compounds this problem. Deep learning models are
+inclined to exploit any feature in the input that is statistically
+predictive of the output, regardless of whether that feature is causally
+related to the correct action. In a self-driving context, if braking is
+correlated with a dashboard indicator light — because the human
+demonstrator always presses the brake and triggers the light
+simultaneously — the trained policy may learn to stop whenever the light
+is on rather than whenever a pedestrian is in the road. The light is a
+non-causal correlate of stopping behavior, but it is just as predictive
+in the training data.</p>
+<p>Expert behavior is often multi-modal: different experts, or the same
+expert in different moods, will take qualitatively different actions in
+identical situations. One driver may change lanes early on a highway;
+another may wait. A Gaussian policy trained on mixed demonstrations will
+produce a single mean action that corresponds to neither strategy — and
+may produce a dangerous intermediate behavior as a result. More
+expressive distribution models are required to represent multi-modal
+behavior faithfully.</p>
+<h2 id="how-can-the-agent-fail-to-fit-the-expert">How Can The Agent Fail
+to Fit the Expert?</h2>
+<p>Behavior cloning rests on a set of assumptions about the structure of
+the decision problem and the demonstrations. Each assumption can be
+violated in practice, and each violation produces a characteristic
+failure mode. The central tension arises from the Markovian assumption
+embedded in the policy <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{s}_t,\theta)\)</span>:
+the policy conditions on the current state <span
+class="math inline">\(\textbf{s}_t\)</span> alone, implicitly assuming
+that <span class="math inline">\(\textbf{s}_t\)</span> contains all
+information needed to select the optimal action. Under this assumption,
+the optimal policy is deterministic and consistent — it always produces
+the same action in the same state.</p>
+<p>The history-conditioned policy <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{o}_0,\ldots,\textbf{o}_t,\theta)\)</span>
+relaxes this assumption by conditioning on the full observation
+sequence. This is closer to how the real world works: the optimal action
+frequently depends on where the agent has been, what it has touched, and
+what commitments it has already made. The disadvantage is practical —
+the input grows with <span class="math inline">\(t\)</span>, inference
+becomes expensive, and longer histories expose the model to more
+spurious correlates.</p>
+<p>The following table summarizes the key assumptions behavior cloning
+makes and the mechanism by which each is broken in practice.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Assumption</th>
+<th>BC formulation</th>
+<th>How it breaks</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Markov property</strong></td>
+<td><span class="math inline">\(\pi(\textbf{a}_t \mid \textbf{s}_t,
+\theta)\)</span>: current state is sufficient</td>
+<td>Partial observability: <span
+class="math inline">\(\textbf{o}_t\)</span> does not reveal the full
+state <span class="math inline">\(\textbf{s}_t\)</span></td>
+<td>Policy produces the same (wrong) action in observationally identical
+but contextually different situations</td>
+</tr>
+<tr class="even">
+<td><strong>i.i.d. distribution</strong></td>
+<td>Test states are drawn from the same distribution as training
+demonstrations</td>
+<td>Compounding errors shift the state distribution; the agent visits
+states the expert never saw</td>
+<td>Error grows as <span class="math inline">\(\mathcal{O}(\epsilon
+T^2)\)</span> instead of <span
+class="math inline">\(\mathcal{O}(\epsilon T)\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Causal identifiability</strong></td>
+<td>Predictive features in <span
+class="math inline">\(\textbf{o}_t\)</span> are causally linked to the
+optimal action</td>
+<td>Spurious correlations: non-causal features can be perfectly
+predictive in training data</td>
+<td>Policy latches onto irrelevant cues that fail at test time when
+correlation breaks</td>
+</tr>
+<tr class="even">
+<td><strong>Unimodal expert</strong></td>
+<td>Demonstrations follow a single consistent policy</td>
+<td>Multi-modal behavior: different experts or moods yield qualitatively
+different actions in the same state</td>
+<td>A unimodal policy (e.g., Gaussian) averages across modes, producing
+behavior that matches none of them</td>
+</tr>
+</tbody>
+</table>
+<p>Recognizing which assumption is violated in a given task guides the
+appropriate remedy. Distribution shift calls for on-policy data
+collection or DAgger. Partial observability calls for observation
+history or recurrent architectures. Causal confusion calls for data
+diversity or causal intervention. Multi-modal behavior calls for
+expressive distribution models such as Gaussian mixtures or diffusion
+policies.</p>
+<h2 id="how-to-learn-from-history">How to Learn From History</h2>
+<figure id="fig:pomdp-stack">
+<embed
+src="/assets/chapters/lec01-SupervisedLearning/figures/vgg16-policy-choice-POMDP.pdf"
+style="width:90.0%" />
+<figcaption aria-hidden="true">Variable number of
+Frames/States</figcaption>
+</figure>
+<p>The simplest response to partial observability is observation
+stacking, illustrated in <a href="#fig:pomdp-stack">Figure</a>: instead
+of feeding a single observation <span
+class="math inline">\(\textbf{o}_t\)</span> to the policy, feed the last
+<span class="math inline">\(k\)</span> observations <span
+class="math inline">\(\textbf{o}_{t-k+1}, \ldots, \textbf{o}_t\)</span>
+as a concatenated input. This extends the policy’s effective receptive
+field in time, giving it access to recent history. For tasks where the
+relevant context is contained within a short window — the direction of
+the last few robot joint movements, the position of an object two
+timesteps ago — this approach is effective and computationally
+cheap.</p>
+<p>Its limitation is that <span class="math inline">\(k\)</span> must be
+fixed at training time, and the policy’s capacity to summarize longer
+histories is constrained by the concatenation window. For tasks
+requiring long-range memory — remembering which objects were placed
+where at the start of a long manipulation sequence — frame stacking is
+insufficient.</p>
+<h2 id="how-to-learn-from-history-1">How to Learn From History</h2>
+<figure id="fig:pomdp-lstm">
+<embed
+src="/assets/chapters/lec01-SupervisedLearning/figures/vgg16-policy-choice-POMDP-LSTM.pdf"
+style="width:80.0%" />
+<figcaption aria-hidden="true">Long Short Term Memory Example <span
+class="citation"
+data-cites="rumelhart1985learning Hochreiter1997-zr">(<a
+href="#ref-rumelhart1985learning" role="doc-biblioref">Rumelhart,
+Hinton, and Williams 1985</a>; <a href="#ref-Hochreiter1997-zr"
+role="doc-biblioref">Hochreiter and Schmidhuber
+1997</a>)</span></figcaption>
+</figure>
+<p>Recurrent architectures — particularly LSTMs <span class="citation"
+data-cites="rumelhart1985learning Hochreiter1997-zr">(<a
+href="#ref-rumelhart1985learning" role="doc-biblioref">Rumelhart,
+Hinton, and Williams 1985</a>; <a href="#ref-Hochreiter1997-zr"
+role="doc-biblioref">Hochreiter and Schmidhuber 1997</a>)</span>, shown
+in <a href="#fig:pomdp-lstm">Figure</a> — provide a principled mechanism
+for maintaining a compressed summary of the observation history. The
+LSTM hidden state <span class="math inline">\(h_t\)</span> is updated at
+each timestep from the previous hidden state and the current
+observation: <span class="math inline">\(h_t = f(h_{t-1},
+\textbf{o}_t)\)</span>. The policy then maps <span
+class="math inline">\((h_t, \textbf{o}_t) \to \textbf{a}_t\)</span>,
+with <span class="math inline">\(h_t\)</span> serving as an implicit
+belief state. Because <span class="math inline">\(h_t\)</span> is
+computed by processing the full observation sequence, the policy’s
+effective history is unbounded in principle, limited only by the LSTM’s
+capacity to retain relevant information over long sequences.</p>
+<p>More recently, Transformers <span class="citation"
+data-cites="vaswani2017attention">(<a href="#ref-vaswani2017attention"
+role="doc-biblioref">Vaswani et al. 2017</a>)</span> have emerged as
+strong alternatives for sequence modeling in policy learning <span
+class="citation" data-cites="ni2023transformers">(<a
+href="#ref-ni2023transformers" role="doc-biblioref">Ni et al.
+2023</a>)</span>. The self-attention mechanism allows the model to
+directly relate any observation in the input sequence to any other,
+without the information bottleneck imposed by compressing history into a
+fixed-size LSTM hidden state. For long demonstrations with complex
+temporal structure, Transformers tend to outperform LSTMs, particularly
+when training data is plentiful enough to support the larger model
+capacity.</p>
+<p>The tradeoff between these approaches — observation stacking,
+recurrent networks, and Transformers — depends on the task’s temporal
+structure, the available data volume, and the inference latency
+budget.</p>
+<h1 id="large-scale-behavior-cloning">Large Scale Behavior Cloning</h1>
+<p>As we increase the amount of data available to train out model we
+enter in the space of <strong>large scale</strong> behavior cloning.
+With enough data and data augmentations models can develop strong
+genralization and robustness capabilities that make the models useful
+enough to use in the real world. This section introduces initial work in
+this area and discusses how to make behavior cloning models that are
+goal-conditioned and therefor multi-task models enabling more
+<strong>taskable</strong> agents.</p>
+<h2
+id="bc-z-zero-shot-task-generalization-with-robotic-imitation-learning">BC-Z:
+Zero-shot task generalization with robotic imitation learning</h2>
+<figure id="fig:image">
+<img src="/assets/chapters/lec01-SupervisedLearning/image.png" style="width:90.0%"
+alt="Mapping language and image to same encoding (Jang et al. 2022)" />
+<figcaption aria-hidden="true">Mapping language and image to same
+encoding <span class="citation" data-cites="Jang2022-uu">(<a
+href="#ref-Jang2022-uu" role="doc-biblioref">Jang et al.
+2022</a>)</span></figcaption>
+</figure>
+<p>BC-Z <span class="citation" data-cites="Jang2022-uu">(<a
+href="#ref-Jang2022-uu" role="doc-biblioref">Jang et al.
+2022</a>)</span>, shown in <a href="#fig:image">Figure</a>, demonstrates
+that behavior cloning can generalize to novel task descriptions not seen
+during training, provided the task is specified via a shared embedding
+space. The key design choice is to map both language task descriptions
+and goal images into the same latent representation, then condition the
+policy on this embedding, similar to CLIP ~<span class="citation"
+data-cites="Radford2021-pq">(<a href="#ref-Radford2021-pq"
+role="doc-biblioref">Radford et al. 2021</a>)</span>. At training time,
+the policy learns across a large collection of tasks with associated
+language labels or goal images. At test time, a new task can be
+described by either modality — a language instruction the system has
+never encountered, or a goal image showing the desired outcome — and the
+policy generalizes via the shared embedding.</p>
+<p>This approach illustrates a broader principle in large-scale BC:
+generalization at the task level is achieved by conditioning on rich
+task representations, not by making the policy unconditional. The
+behavior cloning objective remains unchanged; the change is in what the
+policy is conditioned on. With sufficient diversity in the training task
+distribution and a powerful enough encoder, the resulting policy
+exhibits zero-shot generalization to new task descriptions that are
+semantically close to training tasks.</p>
+<figure id="fig:image-1">
+<img src="/assets/chapters/lec01-SupervisedLearning/image-1.png" style="width:90.0%"
+alt="The BC-Zero network is a Resnet (He et al. 2016)" />
+<figcaption aria-hidden="true">The BC-Zero network is a Resnet <span
+class="citation" data-cites="he2016deep">(<a href="#ref-he2016deep"
+role="doc-biblioref">He et al. 2016</a>)</span></figcaption>
+</figure>
+<h2 id="still-model-learning-can-be-lazy">Still, Model learning can be
+Lazy</h2>
+<figure id="fig:causal-confusion">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/causalConfusion.png"
+style="width:90.0%"
+alt="Learned models focus on the wrong indicators (Haan, Jayaraman, and Levine 2019)" />
+<figcaption aria-hidden="true">Learned models focus on the wrong
+indicators <span class="citation" data-cites="De_Haan2019-ub">(<a
+href="#ref-De_Haan2019-ub" role="doc-biblioref">Haan, Jayaraman, and
+Levine 2019</a>)</span></figcaption>
+</figure>
+<p><a href="#fig:causal-confusion">Figure</a> illustrates a canonical
+example of causal confusion <span class="citation"
+data-cites="De_Haan2019-ub">(<a href="#ref-De_Haan2019-ub"
+role="doc-biblioref">Haan, Jayaraman, and Levine 2019</a>)</span>: a
+self-driving system trained to stop for pedestrians inadvertently learns
+to stop when a dashboard brake indicator light activates, because the
+human demonstrator always pressed the brake pedal — activating both the
+light and the stopping behavior — simultaneously. The light is a
+non-causal correlate of the stopping behavior, but it is perfectly
+predictive in the training data.</p>
+<p>Deep learning models exploit any feature that reduces training loss,
+regardless of causal structure. A feature can be causally irrelevant yet
+statistically sufficient for prediction in training data. The result is
+a policy that appears correct during training but fails catastrophically
+when the spurious correlate and the true causal variable diverge — for
+example, when the brake light malfunctions.</p>
+<p>Including observation history helps partially: if the policy sees
+that the light activates only when the driver presses the brake, and the
+brake press correlates with the car slowing, it may disambiguate more of
+the causal chain. DAgger-style on-policy data collection can also help
+by forcing the policy into states where the spurious correlate is absent
+but the causal variable is present, requiring the model to learn from
+the true signal. Neither approach eliminates causal confusion entirely;
+they reduce its severity. The problem is ultimately one of causal
+identification from observational data, which supervised learning is not
+in general designed to solve.</p>
+<h2 id="give-models-more-data-to-avoid-confusion">Give models More Data
+to Avoid Confusion</h2>
+<figure id="fig:image-2">
+<img src="/assets/chapters/lec01-SupervisedLearning/image-2.png" style="width:90.0%"
+alt="RT-1: Robotics transformer for real-world control at scale (Brohan et al. 2022)" />
+<figcaption aria-hidden="true">RT-1: Robotics transformer for real-world
+control at scale <span class="citation" data-cites="Brohan2022-fw">(<a
+href="#ref-Brohan2022-fw" role="doc-biblioref">Brohan et al.
+2022</a>)</span></figcaption>
+</figure>
+<p>RT-1 <span class="citation" data-cites="Brohan2022-fw">(<a
+href="#ref-Brohan2022-fw" role="doc-biblioref">Brohan et al.
+2022</a>)</span>, shown in <a href="#fig:image-2">Figure</a>,
+demonstrates that large-scale behavior cloning can substantially
+mitigate causal confusion through data diversity alone. The system was
+trained on over 130,000 demonstrations collected across 700+ tasks with
+13 robots over 17 months — a scale that exposes the policy to enough
+variation in the visual context that spurious correlates rarely appear
+consistently across the entire dataset. A feature that correlates with
+stopping in one task’s recordings is unlikely to correlate with stopping
+across hundreds of other tasks, so the model cannot rely on it.</p>
+<p>The architecture is a transformer that processes a sequence of image
+observations conditioned on a language instruction, using FiLM
+(Feature-wise Linear Modulation) <span class="citation"
+data-cites="Perez2018-pk">(<a href="#ref-Perez2018-pk"
+role="doc-biblioref">Perez et al. 2018</a>)</span> to integrate the
+language embedding into the visual processing stream. FiLM allows the
+language instruction to modulate the visual features in a learned,
+task-dependent way — emphasizing features that are relevant for the
+current task description rather than processing images
+unconditionally.</p>
+<p>The result is a behavior cloning system that generalizes to novel
+task descriptions and novel object arrangements, achieves high success
+rates on held-out tasks, and is robust to distractors that would confuse
+smaller models trained on less diverse data. The lesson is that scale —
+in data, in tasks, and in model capacity — is a practical substitute for
+the causal identification that pure BC cannot provide in principle.</p>
+<h2 id="give-models-more-data-to-avoid-confusion-humanoids">Give Models
+More Data to Avoid Confusion: Humanoids</h2>
+<figure id="fig:image-5">
+<img src="/assets/chapters/lec01-SupervisedLearning/image-5.png" style="width:90.0%"
+alt="Humanoid Locomotion as Next Token Prediction (Radosavovic et al. 2024)" />
+<figcaption aria-hidden="true">Humanoid Locomotion as Next Token
+Prediction <span class="citation" data-cites="Radosavovic2024-rz">(<a
+href="#ref-Radosavovic2024-rz" role="doc-biblioref">Radosavovic et al.
+2024</a>)</span></figcaption>
+</figure>
+<p>The behavior cloning paradigm extends naturally to humanoid
+locomotion, as in <a href="#fig:image-5">Figure</a>. Treating motor
+commands as a sequence of tokens, a transformer-based policy can be
+trained to predict the next motor command given the history of
+observations and past commands — the same next-token prediction
+formulation used in large language models <span class="citation"
+data-cites="Radosavovic2024-rz">(<a href="#ref-Radosavovic2024-rz"
+role="doc-biblioref">Radosavovic et al. 2024</a>)</span>.</p>
+<p>Training data is collected from physics simulation using model-based
+controllers (which can generate unlimited data at low cost) and from
+motion capture of real human movements. The resulting policy, when
+deployed on a physical humanoid, produces locomotion behavior — walking,
+jogging, stair climbing — that has not been explicitly demonstrated on
+hardware, achieved through generalization from the diverse training
+distribution.</p>
+<p>This result reinforces the pattern: at sufficient scale and
+diversity, behavior cloning generalizes beyond its training
+distribution. The key architectural choice — treating the policy as a
+sequence model and the control problem as next-token prediction —
+unifies robot learning with the scaling machinery that has proven so
+effective in natural language processing.</p>
+<h1 id="difficulty-modeling-the-expert-data">Difficulty Modeling the
+Expert Data</h1>
+<figure id="fig:dogjumpgap">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/dogJumpGap"
+style="width:90.0%" alt="The Mean is Low Value" />
+<figcaption aria-hidden="true">The Mean is Low Value</figcaption>
+</figure>
+<p>A fundamental tension in imitation learning arises when expert
+behavior is multi-modal — when there are two or more qualitatively
+different actions that are each reasonable in a given state. Consider
+the character of <a href="#fig:dogjumpgap">Figure</a> at the edge of a
+gap that can be traversed by either jumping or bounding. Both strategies
+are valid; individual experts choose one or the other. A policy trained
+by maximum likelihood with a unimodal output distribution (such as a
+single Gaussian) estimates the mean over the training data <span
+class="citation" data-cites="2016-TOG-deepRL">(<a
+href="#ref-2016-TOG-deepRL" role="doc-biblioref">Peng, Berseth, and
+Panne 2016</a>)</span>. The mean of a jump and a bound is an
+intermediate action that corresponds to neither strategy — and which, in
+the context of a gap with danger below, lands the character in exactly
+the wrong place.</p>
+<p>Point estimates are inadequate because they collapse a distribution
+of valid behaviors to a single representative action. The training
+objective minimizes average loss across the dataset, which for a
+Gaussian distribution means finding the mean of the label distribution.
+When the label distribution is bimodal, the mean lies between the two
+modes — a location that is poorly supported by the data and often
+results in catastrophic behavior.</p>
+<p>This failure is not a deficiency of neural networks in particular; it
+is a consequence of optimizing any unimodal distribution model on
+multi-modal data. Fixing it requires either more expressive output
+distributions or methods that explicitly model the multi-modal structure
+of expert behavior.</p>
+<h2 id="better-models">Better Models</h2>
+<figure id="fig:mixture-gaussians">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/mixtureOfGaussians.svg"
+style="width:90.0%" alt="Gaussian Mixture Model" />
+<figcaption aria-hidden="true">Gaussian Mixture Model</figcaption>
+</figure>
+<p>A mixture-of-Gaussians (MoG) policy replaces the single Gaussian
+output head with a weighted combination of <span
+class="math inline">\(K\)</span> Gaussian components, as in
+<a href="#eq:gaussianMixture">Figure</a>:</p>
+<p><span class="math display">\[\begin{equation}
+\label{eq:gaussianMixture}
+\pi(\textbf{a}_t|\textbf{o}_t,\theta) = \sum_{i=1}^{K} \omega_i
+\mathcal{N}(\mu_i, \Sigma_i)
+\end{equation}\]</span></p>
+<p>Each component <span class="math inline">\(i\)</span> has its own
+mean <span class="math inline">\(\mu_i\)</span> and covariance <span
+class="math inline">\(\Sigma_i\)</span>, and the mixture weights <span
+class="math inline">\(\omega_i\)</span> sum to one. In practice, the
+covariance is usually restricted to a diagonal matrix to reduce the
+number of output parameters. <a href="#fig:mixture-gaussians">Figure</a>
+illustrates the distribution shape: two or more separate peaks can be
+represented simultaneously, avoiding the pathological mean between
+modes.</p>
+<p>The network architecture shares a common perception backbone
+(typically a convolutional or transformer encoder) that processes the
+observation <span class="math inline">\(\textbf{o}_t\)</span> into a
+rich representation. Multiple heads branch from this shared backbone —
+one set of heads per component <span class="math inline">\((\mu_i,
+\Sigma_i, \omega_i)\)</span> — so the components share perceptual
+processing while maintaining separate action distributions. At execution
+time, the policy either samples from the full mixture or selects the
+highest-weight component.</p>
+<p>Beyond Gaussian mixtures, three families of more expressive output
+models have been applied to multi-modal imitation, each trading off
+representational power against inference cost.</p>
+<h2 id="diffusion-models-for-multiple-modes">Diffusion Models For
+Multiple Modes</h2>
+<figure id="fig:stable-diffusion">
+<img src="/assets/chapters/lec01-SupervisedLearning/image-3.png" style="width:70.0%"
+alt="Stable Diffusion Model" />
+<figcaption aria-hidden="true">Stable Diffusion Model</figcaption>
+</figure>
+<figure id="fig:diffusion-process">
+<img src="/assets/chapters/lec01-SupervisedLearning/image-4.png" style="width:70.0%"
+alt="Diffusion process on an image" />
+<figcaption aria-hidden="true">Diffusion process on an
+image</figcaption>
+</figure>
+<p>Diffusion models <span class="citation"
+data-cites="Rombach2022-gg Saharia2022-id">(<a
+href="#ref-Rombach2022-gg" role="doc-biblioref">Rombach et al. 2022</a>;
+<a href="#ref-Saharia2022-id" role="doc-biblioref">Saharia et al.
+2022</a>)</span> learn action distributions implicitly by training a
+network to reverse a noise injection process. The forward process
+gradually corrupts a clean action sample with Gaussian noise over <span
+class="math inline">\(T\)</span> steps; the reverse process, illustrated
+in <a href="#fig:diffusion-process">Figure</a>, is a learned denoiser
+that recovers the original distribution step by step from pure noise.
+For action generation, the denoiser is conditioned on the current
+observation <span class="math inline">\(\textbf{o}_t\)</span> and any
+task descriptor, so the resulting distribution is both
+observation-conditional and expressive enough to represent arbitrary
+multi-modal structure.</p>
+<p>Sampling an action requires running the full reverse denoising chain
+— typically 10 to 100 steps — which is more computationally expensive
+than a single forward pass through a Gaussian or MoG head. The practical
+benefit is that the practitioner does not need to specify the number of
+modes or choose a parametric family in advance: the network discovers
+the modes from data, placing probability mass wherever the training
+demonstrations cluster. Diffusion policies <span class="citation"
+data-cites="Chi2024-ep">(<a href="#ref-Chi2024-ep"
+role="doc-biblioref">Chi et al. 2024</a>)</span> have achieved strong
+results on manipulation benchmarks with highly multi-modal demonstration
+data, precisely because they impose no structure on the shape of the
+output distribution.</p>
+<h2 id="better-models-variational-autoencoders">Better Models:
+Variational Autoencoders</h2>
+<figure id="fig:latent-vae">
+<img
+src="/assets/chapters/lec01-SupervisedLearning/figures/latentVariableModelExample.png"
+style="width:70.0%" alt="Latent variable policy model" />
+<figcaption aria-hidden="true">Latent variable policy model</figcaption>
+</figure>
+<p>Variational autoencoders (VAEs) model the action distribution through
+a latent variable <span class="math inline">\(z\)</span>: the policy
+samples <span class="math inline">\(z \sim q(z|\textbf{o}_t)\)</span>
+from a learned encoder, then decodes <span
+class="math inline">\(\textbf{a}_t\sim
+p(\textbf{a}_t|z,\textbf{o}_t)\)</span> through a learned decoder. The
+latent variable captures the discrete structure of multi-modal expert
+behavior — different values of <span class="math inline">\(z\)</span>
+correspond to different modes — while the decoder maps each <span
+class="math inline">\(z\)</span> to a smooth, unimodal action
+distribution conditional on that mode. Training uses the evidence lower
+bound (ELBO), which encourages the latent space to be well-organized and
+the reconstructed actions to match the expert data.</p>
+<p>Conditional VAEs (CVAEs) extend this to condition both encoder and
+decoder on additional context such as the task description or a goal
+image, as in <a href="#fig:latent-vae">Figure</a>. Related approaches
+include normalizing flows (which model the action distribution as an
+invertible transformation of a simple base distribution) and Stein
+variational gradient descent (which maintains a particle approximation
+of the posterior). All three are more tractable to train than diffusion
+models — they require a single forward pass at inference — but are more
+constrained in the distributions they can represent.</p>
+<h2 id="better-models-autoregressive-models">Better Models:
+Autoregressive Models</h2>
+<figure id="fig:autoregressive">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/autogressiveModel.png"
+style="width:70.0%" alt="Autoregressive policy model" />
+<figcaption aria-hidden="true">Autoregressive policy model</figcaption>
+</figure>
+<p>Autoregressive models factorize the joint action distribution across
+action dimensions. Rather than predicting all action dimensions
+simultaneously, the policy predicts each dimension conditioned on the
+previous ones. For a two-dimensional action <span
+class="math inline">\((x_t, y_t)\)</span>, the factorization is:</p>
+<p><span class="math display">\[\pi(x_t|\textbf{o}_t,\theta_x) \cdot
+\pi(y_t|\textbf{o}_t,x_t,\theta_y)\]</span></p>
+<p>The first network <span
+class="math inline">\(\pi(x_t|\textbf{o}_t,\theta_x)\)</span> predicts
+the <span class="math inline">\(x\)</span>-component from the
+observation alone; the second network <span
+class="math inline">\(\pi(y_t|\textbf{o}_t,x_t,\theta_y)\)</span>
+predicts the <span class="math inline">\(y\)</span>-component given both
+the observation and the sampled <span class="math inline">\(x\)</span>,
+as illustrated in <a href="#fig:autoregressive">Figure</a>. This chain
+rule factorization is exact — no approximation is made — and the product
+is arbitrarily expressive as a distribution over action vectors.</p>
+<p>The cost is sequential sampling: all <span
+class="math inline">\(D\)</span> action dimensions must be predicted one
+at a time, requiring <span class="math inline">\(D\)</span> forward
+passes per timestep instead of one. For high-dimensional action spaces
+(whole-body robot control, dexterous hand manipulation), this can be
+expensive. Autoregressive action prediction has nonetheless been adopted
+in several large-scale robot learning systems where the expressiveness
+of the output distribution is worth the inference cost.</p>
+<h1 id="action-chunking">Action Chunking</h1>
+<p>All of the output distribution models above — Gaussian mixtures,
+diffusion, VAEs, and autoregressive factorizations — address the problem
+of matching the policy’s output distribution to the multi-modal
+structure of expert data. A complementary approach, action chunking,
+addresses the problem of how long a policy must plan without querying
+new observations. Rather than changing the output distribution, action
+chunking changes the fundamental granularity of the prediction: instead
+of predicting a single action <span
+class="math inline">\(\textbf{a}_t\)</span> at each timestep, the policy
+predicts a sequence of <span class="math inline">\(k\)</span> actions
+<span class="math inline">\(\langle\textbf{a}_t, \textbf{a}_{t+1},
+\ldots, \textbf{a}_{t+k}\rangle\)</span> as a single unit. All <span
+class="math inline">\(k\)</span> actions in the chunk are then executed
+in sequence before the policy is queried again.</p>
+<p>Action chunking groups <span class="math inline">\(k\)</span>
+consecutive actions into a single prediction unit: the policy outputs an
+action chunk <span class="math inline">\(ac_t = \langle \textbf{a}_t,
+\textbf{a}_{t+1}, \ldots, \textbf{a}_{t+k}\rangle\)</span> rather than a
+single action <span class="math inline">\(\textbf{a}_t\)</span>. All
+<span class="math inline">\(k\)</span> actions in the chunk are executed
+in sequence before the policy is queried again. The mechanism is not new
+— frameskip in the Atari reinforcement learning literature <span
+class="citation" data-cites="mnih2015human">(<a
+href="#ref-mnih2015human" role="doc-biblioref">Mnih et al.
+2015</a>)</span> repeats a single action for <span
+class="math inline">\(k\)</span> frames, effectively reducing decision
+frequency — but the idea of predicting an explicit multi-step sequence
+rather than a repeated single action adds expressive power.</p>
+<p>The key benefit for behavior cloning is its effect on the effective
+horizon. The <span class="math inline">\(\mathcal{O}(\epsilon
+T^2)\)</span> error bound from the distributional shift analysis has
+<span class="math inline">\(T\)</span> in the denominator through the
+number of independent prediction steps. With action chunking, the number
+of policy queries over a trajectory of length <span
+class="math inline">\(T\)</span> is reduced from <span
+class="math inline">\(T\)</span> to <span
+class="math inline">\(T/k\)</span>. The effective horizon is <span
+class="math inline">\(T/k\)</span>, and the quadratic penalty becomes
+<span class="math inline">\(\mathcal{O}(\epsilon (T/k)^2) =
+\mathcal{O}(\epsilon T^2 / k^2)\)</span> — a factor of <span
+class="math inline">\(k^2\)</span> reduction in worst-case error for the
+same per-prediction error rate <span
+class="math inline">\(\epsilon\)</span>. Halving the chunk size
+quadruples the error; doubling it reduces error by four times.</p>
+<p><a href="#fig:Action-chunking">Figure</a> illustrates the grouping: a
+sequence of time steps is divided into non-overlapping chunks, each
+predicted as a unit by a single policy query.</p>
+<h2 id="action-chunking-for-robotics">Action Chunking for Robotics</h2>
+<p>Two distinct strategies address the partial observability problem in
+robotic imitation:</p>
+<p><strong>Option 1 — observation history.</strong> The policy <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{o}_{t-k},\ldots,\textbf{o}_t,\theta)\)</span>
+receives the last <span class="math inline">\(k\)</span> observations as
+input, allowing it to infer aspects of the hidden state from the
+observation sequence. This approach can, in principle, learn an accurate
+belief state if the history window is long enough. The disadvantages are
+practical: the context size grows with <span
+class="math inline">\(k\)</span>, increasing memory and compute
+requirements; and longer context windows expose the model to more
+spurious correlations, increasing the risk of causal confusion <span
+class="citation" data-cites="De_Haan2019-ub swamy2022causal">(<a
+href="#ref-De_Haan2019-ub" role="doc-biblioref">Haan, Jayaraman, and
+Levine 2019</a>; <a href="#ref-swamy2022causal"
+role="doc-biblioref">Swamy et al. 2022</a>)</span>. If a non-causal
+feature appeared consistently in the recent history of demonstrations,
+the model will attend to it.</p>
+<p><strong>Option 2 — action sequence prediction.</strong> Instead of
+expanding the input, the policy predicts a chunk of <span
+class="math inline">\(k\)</span> future actions given the current
+observation: <span
+class="math inline">\(\pi(\langle\textbf{a}_t,\ldots,\textbf{a}_{t+k}\rangle|\textbf{o}_t,\theta)\)</span>.
+The future action sequence encodes an implicit belief — by committing to
+actions that make sense given hidden state <span
+class="math inline">\(h_t\)</span>, the policy reveals what it believes
+the hidden state to be. The context is short (just the current
+observation), reducing causal confusion risk and inference cost. The ACT
+framework <span class="citation" data-cites="Zhao2023-vm">(<a
+href="#ref-Zhao2023-vm" role="doc-biblioref">Zhao et al.
+2023</a>)</span> realizes this approach with a transformer decoder that
+generates action sequences conditioned on proprioceptive and visual
+observations. The main disadvantage is jittery control at chunk
+boundaries, addressed by the smoothing techniques discussed next.</p>
+<h2 id="action-chunking-meets-deep-learning">Action Chunking Meets Deep
+Learning</h2>
+<p>Training action-chunking policies on real robot datasets exposes
+several dataset pathologies that interact poorly with gradient-based
+optimization.</p>
+<p>First, many robotics datasets contain long stretches of the same
+action: a robot arm holds a grasped object steady for several seconds,
+or a mobile robot drives straight for extended periods. When a model is
+trained to predict a single next action, the loss is dominated by these
+long constant-action sequences. Stochastic gradient descent finds the
+easiest solution: predict the average action across the dataset for any
+ambiguous state. Predicting a chunk of <span
+class="math inline">\(k\)</span> actions rather than a single action
+forces the model to predict the variation <em>within</em> each chunk,
+providing gradient signal proportional to the temporal complexity of the
+behavior rather than its duration.</p>
+<p>Second, when the input includes recent past actions (for belief
+estimation via option 1), the model can learn a near-trivial solution:
+copy the most recent action. If the last action at time <span
+class="math inline">\(t-1\)</span> is <span
+class="math inline">\(\textbf{a}_{t-1}\)</span> and consecutive actions
+in the training data are often identical, the identity function <span
+class="math inline">\(\pi(\textbf{a}_t|\ldots,\textbf{a}_{t-1}) =
+\textbf{a}_{t-1}\)</span> achieves low loss. This lazy solution ignores
+the visual input entirely and produces a frozen policy that never adapts
+to the current scene.</p>
+<p>Both pathologies illustrate the same principle: gradient descent
+finds the simplest function that fits the training loss. The problem
+formulation — what inputs are provided and what the model is required to
+predict — must be structured to make the lazy solution unavailable,
+forcing the model to attend to the features that actually drive correct
+behavior.</p>
+<h2 id="action-chunk-smoothing">Action Chunk Smoothing</h2>
+<figure id="fig:box">
+<img src="/assets/chapters/lec10-SequenceModelsAndAux/figures/box.svg"
+style="width:70.0%" alt="Control Discountinuities" />
+<figcaption aria-hidden="true">Control Discountinuities</figcaption>
+</figure>
+<p>When consecutive action chunks are executed back to back, the
+boundary between them can produce abrupt control discontinuities, as in
+<a href="#fig:box">Figure</a>. The chunk ending at <span
+class="math inline">\(t+k\)</span> and the chunk starting at <span
+class="math inline">\(t+k+1\)</span> are generated by two independent
+policy queries, each optimized for internal consistency but unaware of
+each other. The last action of one chunk may point the robot in a
+direction inconsistent with the first action of the next chunk,
+producing a sudden jerk in the trajectory.</p>
+<p>Model averaging addresses this by predicting a new chunk at every
+observation, then averaging the predictions across the overlapping
+windows. At timestep <span class="math inline">\(t\)</span>, the policy
+has predicted chunks starting at <span class="math inline">\(t-k+1,
+t-k+2, \ldots, t\)</span> — all of which include a prediction for what
+action to take at time <span class="math inline">\(t\)</span>. Averaging
+these <span class="math inline">\(k\)</span> predictions smooths the
+control signal: any single chunk’s unusual action at the overlap point
+is attenuated by the other chunks’ predictions, which were generated
+from adjacent observations and therefore encode slightly different views
+of the current context.</p>
+<p>This approach trades off temporal consistency for smooth control. The
+effective chunk length is still <span class="math inline">\(k\)</span>,
+but each executed action incorporates information from <span
+class="math inline">\(k\)</span> policy queries rather than one. The
+computational cost increases by a factor of <span
+class="math inline">\(k\)</span>, which motivates the inference
+optimization discussed next.</p>
+<h2 id="action-chunk-inference-is-expencive">Action Chunk Inference is
+Expencive</h2>
+<p>Real-time robot control requires action decisions at frequencies of
+10–100 Hz, depending on the task dynamics. Transformer-based
+vision-language-action (VLA) models — which process high-dimensional
+image inputs, language embeddings, and proprioception through large
+architectures — often require 0.5 seconds or more per inference pass on
+current hardware. A 0.5-second inference time corresponds to a maximum
+query rate of 2 Hz, far below the control frequency needed for precise
+manipulation or fast locomotion.</p>
+<p>The solution is to increase action chunk size <span
+class="math inline">\(k\)</span> to match the inference latency. If the
+model requires 0.5 seconds per forward pass and the control loop runs at
+50 Hz, a chunk of size 25 allows the robot to execute 25 pre-planned
+actions (0.5 seconds of control) while the next chunk is being computed.
+The model now queries at 2 Hz while the robot acts at 50 Hz — inference
+and execution proceed in parallel.</p>
+<p>Larger chunks reduce the effective decision frequency and can make
+the policy less responsive to unexpected changes in the environment
+(e.g., an object that moves during execution). This is an active
+engineering tradeoff: larger chunks improve computational tractability
+but reduce agility. Methods that predict very long action sequences, or
+that use efficient model architectures to reduce per-query latency, are
+active research directions.</p>
+<h2 id="review-behaviour-cloning">Review: Behaviour Cloning</h2>
+<figure id="fig:behaviourcloning">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/BehaviourCloning.svg"
+style="width:70.0%" alt="Behaviour Cloning" />
+<figcaption aria-hidden="true">Behaviour Cloning</figcaption>
+</figure>
+<p>Behavior cloning, summarized in
+<a href="#fig:behaviourcloning">Figure</a>, is the natural starting
+point for any imitation learning problem, but it is often insufficient
+when deployed on long-horizon tasks. The distribution mismatch between
+training states (from <span class="math inline">\(d^{\pi^*}\)</span>)
+and deployment states (from <span
+class="math inline">\(d^{\pi_\theta}\)</span>) causes errors to
+compound, producing the <span class="math inline">\(\mathcal{O}(\epsilon
+T^2)\)</span> degradation derived earlier.</p>
+<p>When behavior cloning does work well, one of several conditions
+typically holds: the task horizon is short enough that compounding
+errors do not dominate; the training distribution is stable and the
+deployed policy rarely visits out-of-distribution states; or the dataset
+is large enough to cover most of the states the policy will encounter.
+Self-contained tasks with narrow state distributions — a robot
+repeatedly performing the same pick-and-place motion — are more amenable
+to pure BC than open-ended navigation or multi-step manipulation.</p>
+<p>Adding on-policy data through DAgger, using more expressive output
+distributions (Gaussian mixtures, diffusion), and scaling up both model
+and dataset size each address distinct failure modes. Training across
+data collected from multiple human demonstrators has an additional
+benefit: individual experts have idiosyncratic biases and suboptimal
+habits. When a policy is trained on the aggregate of many demonstrators,
+the idiosyncratic behaviors average out, and the shared, more principled
+aspects of the task receive stronger gradient signal. The resulting
+policy can exhibit more robust generalization than any single
+demonstrator would produce in isolation.</p>
+<h2 id="review-the-curse-of-t">Review: The Curse of T</h2>
+<figure id="fig:curse-of-T">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/the-curse-of-T.png"
+style="width:90.0%" alt="The curse of T" />
+<figcaption aria-hidden="true">The curse of <span
+class="math inline">\(T\)</span></figcaption>
+</figure>
+<p><a href="#fig:curse-of-T">Figure</a> depicts the <span
+class="math inline">\(\mathcal{O}(\epsilon T^2)\)</span> relationship:
+as the task horizon <span class="math inline">\(T\)</span> grows, the
+worst-case expected cost grows quadratically for a fixed per-step error
+rate <span class="math inline">\(\epsilon\)</span>. This is the central
+challenge for behavior cloning applied to long-horizon robotics
+tasks.</p>
+<p>Two levers are available for reducing this curse. The first is
+improving the model to reduce <span
+class="math inline">\(\epsilon\)</span> — the per-step error rate on the
+training distribution. Better architectures, larger datasets, and more
+expressive output distributions all contribute. However, reducing <span
+class="math inline">\(\epsilon\)</span> by half only reduces the total
+expected cost by half, because the bound is linear in <span
+class="math inline">\(\epsilon\)</span>. If <span
+class="math inline">\(T\)</span> is large, even a very small <span
+class="math inline">\(\epsilon\)</span> still produces large total
+error.</p>
+<p>The second lever is reducing the effective horizon <span
+class="math inline">\(T\)</span> through action chunking <span
+class="citation" data-cites="Zhao2023-vm">(<a href="#ref-Zhao2023-vm"
+role="doc-biblioref">Zhao et al. 2023</a>)</span>. Predicting a chunk
+<span class="math inline">\(\langle a_i, \ldots, a_{i+k}\rangle\)</span>
+as a single unit reduces the number of independent policy queries from
+<span class="math inline">\(T\)</span> to <span
+class="math inline">\(T/k\)</span>, pushing the bound to <span
+class="math inline">\(\mathcal{O}(\epsilon (T/k)^2) =
+\mathcal{O}(\epsilon T^2/k^2)\)</span>. In recent manipulation work,
+chunk sizes of 25 to 100 timesteps are common, reducing the quadratic
+penalty by factors of 625 to 10,000. This is why action chunking has
+become standard in state-of-the-art behavior cloning systems.</p>
+<h1 id="learning-from-demonstration">Learning from Demonstration</h1>
+<p>Imitation learning is broadly defined as training a policy to
+reproduce behavior from a dataset: find model parameters <span
+class="math inline">\(\theta\)</span> such that <span
+class="math inline">\(p(\textbf{o}|\theta) =
+p(\textbf{o}|\mathcal{D})\)</span>, where <span
+class="math inline">\(\mathcal{D}\)</span> is a collection of observed
+trajectories. This framing encompasses a wide family of methods that
+differ in what they observe, what supervision they receive, and what
+they learn.</p>
+<p>Behavior cloning — described in previous sections — is the simplest
+member of this family: it directly fits a policy to (observation,
+action) pairs via supervised learning. The remaining methods in the
+family address specific limitations of behavior cloning by bringing in
+additional structure or additional interactions with the
+environment.</p>
+<p>Inverse dynamics models infer missing action labels from
+observation-only data. Inverse reinforcement learning recovers a reward
+function rather than imitating actions directly, enabling generalization
+beyond the demonstrations through RL. Distribution matching methods
+(including adversarial approaches) match the state-action visitation
+distribution of the policy to the expert rather than minimizing
+pointwise action prediction error. Partially observed imitation learning
+methods handle cases where action data is unavailable entirely. A survey
+of these methods in the robotics context can be found in <span
+class="citation" data-cites="ROB-053">(<a href="#ref-ROB-053"
+role="doc-biblioref">Osa et al. 2018</a>)</span>.</p>
+<h2 id="inverse-dynamics-models">Inverse Dynamics Models</h2>
+<figure id="fig:idm-example">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/IDMexp.png"
+style="width:85.0%" alt="What Action Caused This?" />
+<figcaption aria-hidden="true">What Action Caused This?</figcaption>
+</figure>
+<p>The Internet contains vast quantities of video data — people
+performing everyday tasks, professional demonstrators, cooking shows,
+sports footage. This data shows what happens but not what actions caused
+it: the actions (joint torques, control signals, button presses) are not
+recorded. Standard behavior cloning cannot use this data directly
+because it requires (observation, action) pairs.</p>
+<p>Inverse dynamics models (IDMs) <span class="citation"
+data-cites="bayo1989inverse asada1990inverse wada1993neural nguyen2008learning">(<a
+href="#ref-bayo1989inverse" role="doc-biblioref">Bayo et al. 1989</a>;
+<a href="#ref-asada1990inverse" role="doc-biblioref">Asada, Ma, and
+Tokumaru 1990</a>; <a href="#ref-wada1993neural"
+role="doc-biblioref">Wada and Kawato 1993</a>; <a
+href="#ref-nguyen2008learning" role="doc-biblioref">Nguyen-Tuong et al.
+2008</a>)</span> address this by learning a model <span
+class="math inline">\(p(\textbf{a}_t|\textbf{s}_t,\textbf{s}_{t+1})\)</span>
+that predicts what action was executed between two consecutive states
+<span class="math inline">\(\textbf{s}_t\)</span> and <span
+class="math inline">\(\textbf{s}_{t+1}\)</span>. The problem is framed
+as supervised learning given state transitions: for any pair <span
+class="math inline">\((\textbf{s}_t, \textbf{s}_{t+1})\)</span> where
+the action <span class="math inline">\(\textbf{a}_t\)</span> is known,
+the IDM is trained to predict <span
+class="math inline">\(\textbf{a}_t\)</span>. Once trained, the IDM can
+be applied to observation-only data — video frames, for example — to
+infer the likely action that caused each transition.</p>
+<p><a href="#fig:idm-example">Figure</a> illustrates the question the
+IDM answers: given before and after images of a scene, what manipulation
+action (grasp, push, lift) was performed? For robotics, this allows a
+small set of fully-annotated demonstrations to bootstrap annotation of a
+much larger unlabeled video corpus, exponentially increasing the
+training data available for the final behavior cloning policy.</p>
+<h2 id="inverse-dynamics-models-generating-data">Inverse Dynamics
+Models: Generating Data</h2>
+<figure id="fig:vpt">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/VPT.png"
+style="width:85.0%"
+alt="Video Pretraining (VPT) Method Overview (Baker et al. 2022)" />
+<figcaption aria-hidden="true">Video Pretraining (VPT) Method Overview
+<span class="citation" data-cites="baker2022video">(<a
+href="#ref-baker2022video" role="doc-biblioref">Baker et al.
+2022</a>)</span></figcaption>
+</figure>
+<p>The common use case for IDMs exploits the asymmetry between
+observation-rich and action-labeled data. Video of humans performing
+tasks — cooking, assembly, Minecraft gameplay — is available at enormous
+scale and essentially zero marginal cost. Data that includes actions
+(teleoperation logs, controller recordings) is expensive to collect and
+requires specialized setup.</p>
+<p>The IDM pipeline, illustrated in <a href="#fig:vpt">Figure</a>, uses
+a small amount of action-labeled expert data <span
+class="math inline">\(\mathcal{D}_{exp}\)</span> to train the IDM, then
+applies the trained IDM to pseudo-label a much larger observation-only
+dataset <span class="math inline">\(\mathcal{D}_{wild}\)</span>. The
+pseudo-labeled dataset is then used to train the final behavior cloning
+policy.</p>
+<p>Video Pretraining (VPT) <span class="citation"
+data-cites="baker2022video">(<a href="#ref-baker2022video"
+role="doc-biblioref">Baker et al. 2022</a>)</span> demonstrated this at
+large scale for Minecraft: approximately 2,000 hours of contractor
+gameplay with keyboard-and-mouse actions were used to train an IDM; the
+IDM was then applied to 70,000 hours of unlabeled internet gameplay
+video to generate pseudo-labeled action annotations; a large transformer
+policy was trained on the combined dataset. The resulting foundation
+model showed strong zero-shot behavior and could be fine-tuned with a
+small amount of additional expert data to acquire specific skills. The
+IDM approach thus makes it possible to leverage the orders-of-magnitude
+more data available in the wild compared to expert-annotated
+datasets.</p>
+<h2 id="inverse-dynamics-models-algorithm">Inverse Dynamics Models:
+Algorithm</h2>
+<p>The IDM pretraining algorithm requires two datasets: a small expert
+dataset <span class="math inline">\(\mathcal{D}_{exp}\)</span> with both
+states and actions, and a large observation-only dataset <span
+class="math inline">\(\mathcal{D}_{wild}\)</span> with only states. The
+expert dataset is used exclusively to train the IDM <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{s}_t,\textbf{s}_{t+1},\phi)\)</span>
+— it is never used directly to train the final policy. The IDM is then
+applied to generate pseudo-action labels for <span
+class="math inline">\(\mathcal{D}_{wild}\)</span>, converting it to a
+fully-labeled dataset suitable for behavior cloning.</p>
+<p>The key advantage is data efficiency at the policy level: the
+expensive expert data requirement is confined to the IDM, which is a
+simpler model (it only needs to infer actions from state transitions,
+without needing to generate actions from observations alone). In
+practice, relatively small amounts of expert data are sufficient for the
+IDM, because the state-transition-to-action mapping is a more
+constrained problem than the full observation-to-action mapping.</p>
+<p>A practical benefit of the IDM formulation is debuggability: the
+IDM’s predictions can be evaluated independently of the policy. If the
+IDM is producing clearly wrong action labels in a specific region of
+state space — visible from the fact that the inferred actions produce
+transitions inconsistent with the training data — this signals that
+<span class="math inline">\(\mathcal{D}_{exp}\)</span> needs more
+coverage of that region. This interpretability makes the IDM pipeline
+easier to diagnose and improve than end-to-end behavior cloning on
+unlabeled data.</p>
+<h2 id="behaviour-cloning">Behaviour Cloning</h2>
+<p><span class="math display">\[\begin{equation}
+    \label{equation:behaviour-cloning}
+    \max_{\theta} \mathbb{E}_{\pi_{E}}[\sum_{t = 0}^{T} \log
+\pi(\textbf{a}_{t}| \textbf{s}_{t}, \theta )]
+\end{equation}\]</span></p>
+<p>Behavior cloning <span class="citation"
+data-cites="bain1995framework">(<a href="#ref-bain1995framework"
+role="doc-biblioref">Bain and Sammut 1995</a>)</span> formally maximizes
+the log-likelihood of the expert’s actions under the learned policy.
+Given a collection of expert trajectories <span
+class="math inline">\(\tau=
+\langle(\textbf{s}_0,\textbf{a}_0),\ldots,(\textbf{s}_T,\textbf{a}_T)\rangle\)</span>,
+the objective is:</p>
+<p><span class="math display">\[\max_\theta
+\mathbb{E}_{\pi_E}\!\left[\sum_{t=0}^T
+\log\pi(\textbf{a}_t|\textbf{s}_t,\theta)\right]\]</span></p>
+<p>This is a maximum likelihood estimation problem over the conditional
+distribution <span
+class="math inline">\(\pi(\textbf{a}_t|\textbf{s}_t,\theta)\)</span>.
+For a Gaussian policy, maximizing log-likelihood is equivalent to
+minimizing mean squared error between predicted and expert actions. For
+a categorical distribution over discrete actions, it is equivalent to
+minimizing cross-entropy.</p>
+<p>The simplicity of this objective is its main advantage: any
+supervised learning infrastructure — stochastic gradient descent,
+automatic differentiation, pre-trained feature extractors — applies
+directly. The main disadvantage is the distribution mismatch discussed
+at length in earlier sections: the expectation is taken over states
+sampled from the <em>expert’s</em> state distribution <span
+class="math inline">\(d^{\pi_E}\)</span>, not the <em>learner’s</em>
+deployment distribution. This discrepancy grows as the learned policy
+deviates from the expert, producing the quadratic error scaling with
+task horizon.</p>
+<h2 id="distribution-matching">Distribution Matching</h2>
+<p>Behavior cloning minimizes prediction error at each state
+independently: for every <span class="math inline">\((s,a)\)</span> pair
+in the expert dataset, the loss penalizes disagreement between <span
+class="math inline">\(\pi_\theta(\textbf{a}|\textbf{s})\)</span> and
+<span class="math inline">\(\textbf{a}\)</span>. This pointwise
+objective does not directly constrain the global distribution of states
+the policy visits. Distribution matching methods take a different
+objective: rather than matching the expert’s actions state by state,
+they match the expert’s <em>state-action visitation distribution</em>
+<span class="math inline">\(d^{\pi^*}(\textbf{s},\textbf{a})\)</span> as
+a whole.</p>
+<p>The key insight is that distribution shift arises because <span
+class="math inline">\(d^{\pi_\theta}(\textbf{s},\textbf{a}) \neq
+d^{\pi^*}(\textbf{s},\textbf{a})\)</span>: the policy visits different
+states than the expert did, and the training signal was computed only
+over the expert’s states. A policy trained to make <span
+class="math inline">\(d^{\pi_\theta}(\textbf{s},\textbf{a}) =
+d^{\pi^*}(\textbf{s},\textbf{a})\)</span> cannot suffer distribution
+shift by definition. The challenge is that this distribution-level
+objective is harder to optimize than pointwise prediction error:
+computing <span class="math inline">\(d^{\pi_\theta}\)</span> requires
+rolling out the policy in the environment, and comparing two trajectory
+distributions requires a distance metric that is tractable to
+optimize.</p>
+<p>In practice, distribution matching is approximated through
+adversarial training or through maximum entropy objectives. The
+adversarial formulation, described in the next section, trains a
+discriminator to distinguish the policy’s visitation distribution from
+the expert’s, and uses the discriminator’s output as a reward signal for
+policy optimization. This approach recovers a distribution-matching
+objective without requiring an analytic form for <span
+class="math inline">\(d^{\pi_\theta}\)</span> or <span
+class="math inline">\(d^{\pi^*}\)</span>.</p>
+<h2 id="inverse-reinforcement-learning">Inverse Reinforcement
+Learning</h2>
+<p><span class="math display">\[\begin{equation}
+    \label{equation-IRL}
+    \max_{c \in C} \min_{\pi} (\mathbb{E}_{\theta}[c(\textbf{s},
+\textbf{a})] - H(\pi(\textbf{a}|\textbf{s},\theta)) ) -
+\mathbb{E}_{\mathcal{D}_{\text{train}}}[c(\textbf{s}, \textbf{a})]
+\end{equation}\]</span></p>
+<p>Inverse reinforcement learning (IRL) reframes imitation as reward
+learning rather than action cloning. Instead of directly copying
+actions, IRL recovers a cost function <span
+class="math inline">\(c(\textbf{s},\textbf{a})\)</span> that
+characterizes what the expert is trying to achieve, then uses this cost
+function as a reward signal to train a policy via RL. The recovered
+reward generalizes across states not covered by the demonstrations,
+because the policy can optimize <span class="math inline">\(r_t =
+-c(\textbf{s}_t,\textbf{a}_t)\)</span> in novel situations.</p>
+<p>Maximum entropy IRL <span class="citation"
+data-cites="Ziebart:2008:MEI:1620270.1620297">(<a
+href="#ref-Ziebart:2008:MEI:1620270.1620297"
+role="doc-biblioref">Ziebart et al. 2008</a>)</span> formalizes this as
+a max-min optimization over cost functions <span class="math inline">\(c
+\in C\)</span> and policies <span
+class="math inline">\(\pi\)</span>:</p>
+<p><span class="math display">\[\max_{c \in C} \min_\pi
+\left(\mathbb{E}_\theta[c(\textbf{s},\textbf{a})] -
+H(\pi(\textbf{a}|\textbf{s},\theta))\right) -
+\mathbb{E}_{\mathcal{D}_{train}}[c(\textbf{s},\textbf{a})]\]</span></p>
+<p>The outer maximization over <span class="math inline">\(c\)</span>
+looks for a cost function that is high for the learned policy but low
+for the expert demonstrations. The inner minimization over <span
+class="math inline">\(\pi\)</span> finds the best response to the
+current cost function while maintaining high entropy <span
+class="math inline">\(H(\pi)\)</span> — the entropy term prevents the
+solution from collapsing to a deterministic policy and ensures that
+ambiguous states are handled probabilistically. The resulting <span
+class="math inline">\(c\)</span> is the cost function for which the
+expert appears most rational and the learned policy performs worst,
+serving as the most discriminating reward for RL training.</p>
+<p>IRL is more powerful than BC in principle — it can generalize to
+states never visited by the expert — but it is computationally
+expensive: the inner minimization requires solving an RL problem at each
+outer iteration. This cost motivates the adversarial approaches that
+approximate IRL more efficiently.</p>
+<h2 id="adversarial-methods">Adversarial Methods</h2>
+<p><span class="math display">\[\begin{equation}
+    \label{eq:GAIL}
+  \min_{\theta} \max_{\phi} \mathbb{E}_{\pi_{E}}[\log( D(\textbf{s},
+\textbf{a}| \phi))] + \mathbb{E}_{\pi_{\theta}}[\log( 1- D(\textbf{s},
+\textbf{a}| \phi))]
+\end{equation}\]</span></p>
+<p>Generative Adversarial Imitation Learning (GAIL) <span
+class="citation" data-cites="NIPS2016_6391">(<a
+href="#ref-NIPS2016_6391" role="doc-biblioref">Ho and Ermon
+2016</a>)</span> connects imitation learning to generative adversarial
+training. A discriminator <span
+class="math inline">\(D(\textbf{s},\textbf{a}|\phi)\)</span> is trained
+to distinguish state-action pairs from expert trajectories (positive
+examples) from pairs generated by the current policy (negative
+examples). The policy is trained adversarially to fool the discriminator
+— to produce state-action pairs indistinguishable from the expert’s. The
+adversarial objective is given in <a href="#eq:GAIL">Figure</a>:</p>
+<p><span class="math display">\[\min_\theta \max_\phi
+\mathbb{E}_{\pi_E}[\log D(\textbf{s},\textbf{a}|\phi)] +
+\mathbb{E}_{\pi_\theta}[\log(1 -
+D(\textbf{s},\textbf{a}|\phi))]\]</span></p>
+<p>The discriminator’s output <span
+class="math inline">\(D(\textbf{s},\textbf{a}|\phi)\)</span> serves as a
+dense reward signal for RL: state-action pairs that look expert-like
+receive reward close to 0; pairs that look unlike the expert receive
+reward close to 1 (to be minimized). This connection to RL makes GAIL
+more robust to distribution shift than behavior cloning — the policy can
+optimize via environment interaction, not just on fixed demonstration
+data.</p>
+<p>The practical limitation of GAIL <span class="citation"
+data-cites="NIPS2016_6391 DBLP:journals/corr/MerelTTSLWWH17">(<a
+href="#ref-NIPS2016_6391" role="doc-biblioref">Ho and Ermon 2016</a>; <a
+href="#ref-DBLP:journals/corr/MerelTTSLWWH17" role="doc-biblioref">Merel
+et al. 2017</a>)</span> is that it requires ongoing access to the expert
+policy for online sampling. The policy must collect fresh rollouts and
+compare them to fresh expert samples at every training step. When
+demonstrations are fixed and the expert is unavailable, this continuous
+sampling requirement cannot be met. Extensions such as offline GAIL
+variants relax this requirement, but introduce additional distributional
+shift challenges.</p>
+<h2 id="partially-observable-imitation">Partially Observable
+Imitation</h2>
+<figure id="fig:imitation-data">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/ImitationLearningData.svg"
+style="width:35.0%" alt="VisualImitationLearning" />
+<figcaption aria-hidden="true">VisualImitationLearning</figcaption>
+</figure>
+<p>The methods described so far assume access to action labels in the
+demonstration data, or at minimum to an interactive expert who can
+provide actions on demand. A more challenging setting arises when only
+observations are available — for example, when learning from internet
+video where no action recording was made.</p>
+<p>GAILfO <span class="citation" data-cites="torabi2018generative">(<a
+href="#ref-torabi2018generative" role="doc-biblioref">Torabi, Warnell,
+and Stone 2018</a>)</span> extends GAIL to the observation-only setting.
+The discriminator now operates on state-transition pairs <span
+class="math inline">\((\textbf{s}_t, \textbf{s}_{t+1})\)</span> rather
+than state-action pairs <span class="math inline">\((\textbf{s}_t,
+\textbf{a}_t)\)</span>, since actions are not available. The policy is
+trained to produce transitions that are indistinguishable from the
+expert’s observed transitions. This removes the action-supervision
+requirement but retains the requirement for ongoing access to an expert
+policy for sampling <span class="citation"
+data-cites="DBLP:conf/icml/0002VBB19 NIPS2019_8317">(<a
+href="#ref-DBLP:conf/icml/0002VBB19" role="doc-biblioref">Sun et al.
+2019</a>; <a href="#ref-NIPS2019_8317" role="doc-biblioref">Yang et al.
+2019</a>)</span>.</p>
+<p>Methods that work from a single fixed demonstration address the
+further challenge of the expert policy being unavailable entirely <span
+class="citation" data-cites="VizImitation">(<a href="#ref-VizImitation"
+role="doc-biblioref">Berseth, Golemo, and Pal 2023</a>)</span>. These
+approaches often combine an inverse dynamics model (to infer a plausible
+action sequence from the demonstration) with environment interaction to
+refine the policy, potentially even transferring behavior across robots
+with different dynamics from the same observation sequence. The
+trade-off is increased dependence on the quality of the IDM and the
+accuracy of the inferred dynamics model.</p>
+<p><a href="#fig:imitation-data">Figure</a> shows the variety of
+supervision available across different imitation learning settings: full
+(state, action) pairs; state-only sequences; or even partial
+observations from a third-person view.</p>
+<h2 id="main-points">Main points</h2>
+<p>Behavior cloning is the natural starting point for robot learning
+from demonstrations. Its simplicity — supervised learning on
+(observation, action) pairs — makes it straightforward to implement and
+often surprisingly effective at short horizons. The compounding error
+analysis shows why it fails at long horizons: a per-step error rate
+<span class="math inline">\(\epsilon\)</span> leads to <span
+class="math inline">\(\mathcal{O}(\epsilon T^2)\)</span> cumulative
+cost, which grows quadratically with the task length.</p>
+<p>DAgger corrects distribution shift through iterative dataset
+aggregation, but requires a human expert to label on-policy states at
+each iteration — a cost that limits its practical applicability. The
+theoretical improvement is substantial: the error bound drops to <span
+class="math inline">\(\mathcal{O}(\epsilon T)\)</span> with sufficient
+iterations, linear rather than quadratic in <span
+class="math inline">\(T\)</span>.</p>
+<p>At scale, behavior cloning generalizes more than its theoretical
+analysis suggests. Systems like RT-1 and BC-Z demonstrate that training
+on 100,000+ demonstrations across hundreds of tasks produces policies
+that generalize to novel instructions and object arrangements — not
+because the theory changes, but because data diversity prevents any
+spurious correlate from being consistently predictive.</p>
+<p>Multi-modal expert behavior requires expressive output distributions.
+Gaussian mixture models, diffusion policies, VAEs, and autoregressive
+factorizations each capture different aspects of this multi-modality,
+with different trade-offs between expressiveness and inference cost.</p>
+<p>Action chunking reduces the effective horizon from <span
+class="math inline">\(T\)</span> to <span
+class="math inline">\(T/k\)</span>, shrinking the quadratic error
+penalty by a factor of <span class="math inline">\(k^2\)</span> and
+simultaneously decoupling inference latency from control frequency. It
+has become a standard component of state-of-the-art behavior cloning
+systems for robot manipulation.</p>
+<p>The progression from pure BC through DAgger, scale, and better output
+models illustrates a recurring pattern in robot learning: each
+structural limitation of a simpler approach motivates a principled
+extension, and the extensions can be combined. A modern large-scale
+behavior cloning system might use DAgger-style on-policy data
+collection, a transformer architecture conditioned on language goals, a
+diffusion output head, and action chunking — addressing distribution
+shift, partial observability, multi-modality, and horizon
+simultaneously.</p>
+<h1 class="unnumbered" id="bibliography">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-anthony1999neural" class="csl-entry" role="listitem">
+Anthony, Martin, Peter L Bartlett, et al. n.d. <em>Neural Network
+Learning: Theoretical Foundations</em>. Vol. 9.
+</div>
+<div id="ref-asada1990inverse" class="csl-entry" role="listitem">
+Asada, H, Z-D Ma, and H Tokumaru. 1990. <span>“Inverse Dynamics of
+Flexible Robot Arms: Modeling and Computation for Trajectory
+Control.”</span> <em>Journal of Dynamic Systems, Measurement, and
+Control</em> 112 (2): 177–85.
+</div>
+<div id="ref-bain1995framework" class="csl-entry" role="listitem">
+Bain, Michael, and Claude Sammut. 1995. <span>“A Framework for
+Behavioural Cloning.”</span> In <em>Machine Intelligence 15</em>,
+103–29.
+</div>
+<div id="ref-baker2022video" class="csl-entry" role="listitem">
+Baker, Bowen, Ilge Akkaya, Peter Zhokov, Joost Huizinga, Jie Tang,
+Adrien Ecoffet, Brandon Houghton, Raul Sampedro, and Jeff Clune. 2022.
+<span>“Video Pretraining (Vpt): Learning to Act by Watching Unlabeled
+Online Videos.”</span> <em>Advances in Neural Information Processing
+Systems</em> 35: 24639–54.
+</div>
+<div id="ref-bayo1989inverse" class="csl-entry" role="listitem">
+Bayo, Eduardo, Philip Papadopoulos, James Stubbe, and Miguel Angel
+Serna. 1989. <span>“Inverse Dynamics and Kinematics of Multi-Link
+Elastic Robots: An Iterative Frequency Domain Approach.”</span> <em>The
+International Journal of Robotics Research</em> 8 (6): 49–62.
+</div>
+<div id="ref-VizImitation" class="csl-entry" role="listitem">
+Berseth, Glen, Florian Golemo, and Christopher Pal. 2023. <span>“Towards
+Learning to Imitate from a Single Video Demonstration.”</span>
+<em>Journal of Machine Learning Research</em> 24 (78): 1–26. <a
+href="http://jmlr.org/papers/v24/21-1174.html">http://jmlr.org/papers/v24/21-1174.html</a>.
+</div>
+<div id="ref-bojarski2016end" class="csl-entry" role="listitem">
+Bojarski, Mariusz, Davide Del Testa, Daniel Dworakowski, Bernhard
+Firner, Beat Flepp, Prasoon Goyal, Lawrence D Jackel, et al. 2016.
+<span>“End to End Learning for Self-Driving Cars.”</span> <em>arXiv
+Preprint arXiv:1604.07316</em>.
+</div>
+<div id="ref-Brohan2022-fw" class="csl-entry" role="listitem">
+Brohan, Anthony, Noah Brown, Justice Carbajal, Yevgen Chebotar, Joseph
+Dabis, Chelsea Finn, Keerthana Gopalakrishnan, et al. 2022.
+<span>“<span>RT-1</span>: Robotics Transformer for Real-World Control at
+Scale,”</span> December. <a
+href="https://arxiv.org/abs/2212.06817">https://arxiv.org/abs/2212.06817</a>.
+</div>
+<div id="ref-Chi2024-ep" class="csl-entry" role="listitem">
+Chi, Cheng, Zhenjia Xu, Chuer Pan, Eric Cousineau, Benjamin Burchfiel,
+Siyuan Feng, Russ Tedrake, and Shuran Song. 2024. <span>“Universal
+Manipulation Interface: In-the-Wild Robot Teaching Without in-the-Wild
+Robots.”</span> <em>arXiv [Cs.RO]</em>, February.
+</div>
+<div id="ref-De_Haan2019-ub" class="csl-entry" role="listitem">
+Haan, Pim de, Dinesh Jayaraman, and Sergey Levine. 2019. <span>“Causal
+Confusion in Imitation Learning.”</span> In <em>Advances in Neural
+Information Processing Systems</em>, edited by H Wallach, H Larochelle,
+A Beygelzimer, F dÁlché-Buc, E Fox, and R Garnett. Vol. 32. Curran
+Associates, Inc.
+</div>
+<div id="ref-he2016deep" class="csl-entry" role="listitem">
+He, Kaiming, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016.
+<span>“Deep Residual Learning for Image Recognition.”</span> In
+<em>Proceedings of the IEEE Conference on Computer Vision and Pattern
+Recognition</em>, 770–78.
+</div>
+<div id="ref-NIPS2016_6391" class="csl-entry" role="listitem">
+Ho, Jonathan, and Stefano Ermon. 2016. <span>“Generative Adversarial
+Imitation Learning.”</span> In <em>Advances in Neural Information
+Processing Systems 29</em>, edited by D. D. Lee, M. Sugiyama, U. V.
+Luxburg, I. Guyon, and R. Garnett, 4565–73. Curran Associates, Inc. <a
+href="http://papers.nips.cc/paper/6391-generative-adversarial-imitation-learning.pdf">http://papers.nips.cc/paper/6391-generative-adversarial-imitation-learning.pdf</a>.
+</div>
+<div id="ref-Hochreiter1997-zr" class="csl-entry" role="listitem">
+Hochreiter, S, and J Schmidhuber. 1997. <span>“Long Short-Term
+Memory.”</span> <em>Neural Comput.</em> 9 (8): 1735–80.
+</div>
+<div id="ref-hussein2017imitation" class="csl-entry" role="listitem">
+Hussein, Ahmed, Mohamed Medhat Gaber, Eyad Elyan, and Chrisina Jayne.
+2017. <span>“Imitation Learning: A Survey of Learning Methods.”</span>
+<em>ACM Computing Surveys (CSUR)</em> 50 (2): 1–35.
+</div>
+<div id="ref-Jang2022-uu" class="csl-entry" role="listitem">
+Jang, Eric, Alex Irpan, Mohi Khansari, Daniel Kappler, Frederik Ebert,
+Corey Lynch, Sergey Levine, and Chelsea Finn. 2022.
+<span>“<span>BC-Z</span>: Zero-Shot Task Generalization with Robotic
+Imitation Learning,”</span> February. <a
+href="https://arxiv.org/abs/2202.02005">https://arxiv.org/abs/2202.02005</a>.
+</div>
+<div id="ref-DBLP:journals/corr/MerelTTSLWWH17" class="csl-entry"
+role="listitem">
+Merel, Josh, Yuval Tassa, Dhruva TB, Sriram Srinivasan, Jay Lemmon, Ziyu
+Wang, Greg Wayne, and Nicolas Heess. 2017. <span>“Learning Human
+Behaviors from Motion Capture by Adversarial Imitation.”</span>
+<em>CoRR</em> abs/1707.02201. <a
+href="http://arxiv.org/abs/1707.02201">http://arxiv.org/abs/1707.02201</a>.
+</div>
+<div id="ref-mnih2015human" class="csl-entry" role="listitem">
+Mnih, Volodymyr, Koray Kavukcuoglu, David Silver, Andrei A Rusu, Joel
+Veness, Marc G Bellemare, Alex Graves, et al. 2015. <span>“Human-Level
+Control Through Deep Reinforcement Learning.”</span> <em>Nature</em> 518
+(7540): 529–33.
+</div>
+<div id="ref-nguyen2008learning" class="csl-entry" role="listitem">
+Nguyen-Tuong, Duy, Jan Peters, Matthias Seeger, and Bernhard Schölkopf.
+2008. <span>“Learning Inverse Dynamics: A Comparison.”</span> In
+<em>European Symposium on Artificial Neural Networks</em>. CONF.
+</div>
+<div id="ref-ni2023transformers" class="csl-entry" role="listitem">
+Ni, Tianwei, Michel Ma, Benjamin Eysenbach, and Pierre-Luc Bacon. 2023.
+<span>“When Do Transformers Shine in RL? Decoupling Memory from Credit
+Assignment.”</span>
+</div>
+<div id="ref-ROB-053" class="csl-entry" role="listitem">
+Osa, Takayuki, Joni Pajarinen, Gerhard Neumann, J. Andrew Bagnell,
+Pieter Abbeel, and Jan Peters. 2018. <span>“An Algorithmic Perspective
+on Imitation Learning.”</span> <em>Foundations and Trends® in
+Robotics</em> 7 (1-2): 1–179. <a
+href="https://doi.org/10.1561/2300000053">https://doi.org/10.1561/2300000053</a>.
+</div>
+<div id="ref-2016-TOG-deepRL" class="csl-entry" role="listitem">
+Peng, Xue Bin, Glen Berseth, and Michiel van de Panne. 2016.
+<span>“Terrain-Adaptive Locomotion Skills Using Deep Reinforcement
+Learning.”</span> <em>ACM Transactions on Graphics (Proc. SIGGRAPH
+2016)</em> 35 (4).
+</div>
+<div id="ref-Perez2018-pk" class="csl-entry" role="listitem">
+Perez, Ethan, Florian Strub, Harm De Vries, Vincent Dumoulin, and Aaron
+Courville. 2018. <span>“<span>FiLM</span>: Visual Reasoning with a
+General Conditioning Layer.”</span> <em>Proc. Conf. AAAI Artif.
+Intell.</em> 32 (1).
+</div>
+<div id="ref-pomerleau1988alvinn" class="csl-entry" role="listitem">
+Pomerleau, Dean A. 1988. <span>“ALVINN: An Autonomous Land Vehicle in a
+Neural Network.”</span> In <em>Proceedings of the 1st International
+Conference on Neural Information Processing Systems</em>, 305–13.
+</div>
+<div id="ref-Radford2021-pq" class="csl-entry" role="listitem">
+Radford, Alec, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh,
+Sandhini Agarwal, Girish Sastry, et al. 2021. <span>“Learning
+Transferable Visual Models from Natural Language Supervision.”</span> In
+<em>Proceedings of the 38th International Conference on Machine
+Learning</em>, edited by Marina Meila and Tong Zhang, 139:8748–63.
+Proceedings of Machine Learning Research. PMLR.
+</div>
+<div id="ref-Radosavovic2024-rz" class="csl-entry" role="listitem">
+Radosavovic, Ilija, Jathushan Rajasegaran, Baifeng Shi, Bike Zhang,
+Sarthak Kamat, Koushil Sreenath, Trevor Darrell, and Jitendra Malik.
+2024. <span>“Humanoid Locomotion as Next Token Prediction.”</span> In
+<em>The Thirty-Eighth Annual Conference on Neural Information Processing
+Systems</em>.
+</div>
+<div id="ref-Rombach2022-gg" class="csl-entry" role="listitem">
+Rombach, Robin, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and
+Björn Ommer. 2022. <span>“High-Resolution Image Synthesis with Latent
+Diffusion Models.”</span> In <em>Proceedings of the IEEE/CVF Conference
+on Computer Vision and Pattern Recognition</em>, 10684–95.
+</div>
+<div id="ref-dagger" class="csl-entry" role="listitem">
+Ross, Stephane, Geoffrey Gordon, and Drew Bagnell. 2011. <span>“A
+Reduction of Imitation Learning and Structured Prediction to No-Regret
+Online Learning.”</span> In <em>Proceedings of the Fourteenth
+International Conference on Artificial Intelligence and Statistics</em>,
+edited by Geoffrey Gordon, David Dunson, and Miroslav Dudík, 15:627–35.
+Proceedings of Machine Learning Research. Fort Lauderdale, FL, USA:
+PMLR. <a
+href="http://proceedings.mlr.press/v15/ross11a.html">http://proceedings.mlr.press/v15/ross11a.html</a>.
+</div>
+<div id="ref-rumelhart1985learning" class="csl-entry" role="listitem">
+Rumelhart, David E, Geoffrey E Hinton, and Ronald J Williams. 1985.
+<span>“Learning Internal Representations by Error Propagation.”</span>
+California Univ San Diego La Jolla Inst for Cognitive Science.
+</div>
+<div id="ref-Saharia2022-id" class="csl-entry" role="listitem">
+Saharia, Chitwan, William Chan, Saurabh Saxena, Lala Li, Jay Whang,
+Emily L Denton, Seyed Kamyar Seyed Ghasemipour, et al. 2022.
+<span>“Photorealistic Text-to-Image Diffusion Models with Deep Language
+Understanding.”</span> Edited by S Koyejo, S Mohamed, A Agarwal, D
+Belgrave, K Cho, and A Oh. <em>Neural Inf Process Syst</em>
+abs/2205.11487 (May): 36479–94.
+</div>
+<div id="ref-schaal1999imitation" class="csl-entry" role="listitem">
+Schaal, Stefan. 1999. <span>“Is Imitation Learning the Route to Humanoid
+Robots?”</span> <em>Trends in Cognitive Sciences</em> 3 (6): 233–42.
+</div>
+<div id="ref-DBLP:conf/icml/0002VBB19" class="csl-entry"
+role="listitem">
+Sun, Wen, Anirudh Vemula, Byron Boots, and Drew Bagnell. 2019.
+<span>“Provably Efficient Imitation Learning from Observation
+Alone.”</span> In <em>ICML</em>, 6036–45. <a
+href="http://proceedings.mlr.press/v97/sun19b.html">http://proceedings.mlr.press/v97/sun19b.html</a>.
+</div>
+<div id="ref-swamy2022causal" class="csl-entry" role="listitem">
+Swamy, Gokul, Sanjiban Choudhury, Drew Bagnell, and Steven Wu. 2022.
+<span>“Causal Imitation Learning Under Temporally Correlated
+Noise.”</span> In <em>International Conference on Machine Learning</em>,
+20877–90. PMLR.
+</div>
+<div id="ref-torabi2018generative" class="csl-entry" role="listitem">
+Torabi, Faraz, Garrett Warnell, and Peter Stone. 2018. <span>“Generative
+Adversarial Imitation from Observation.”</span> <em>arXiv Preprint
+arXiv:1807.06158</em>.
+</div>
+<div id="ref-vaswani2017attention" class="csl-entry" role="listitem">
+Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion
+Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017.
+<span>“Attention Is All You Need.”</span> <em>Advances in Neural
+Information Processing Systems</em> 30.
+</div>
+<div id="ref-wada1993neural" class="csl-entry" role="listitem">
+Wada, Yasuhiro, and Mitsuo Kawato. 1993. <span>“A Neural Network Model
+for Arm Trajectory Formation Using Forward and Inverse Dynamics
+Models.”</span> <em>Neural Networks</em> 6 (7): 919–32.
+</div>
+<div id="ref-NIPS2019_8317" class="csl-entry" role="listitem">
+Yang, Chao, Xiaojian Ma, Wenbing Huang, Fuchun Sun, Huaping Liu, Junzhou
+Huang, and Chuang Gan. 2019. <span>“Imitation Learning from Observations
+by Minimizing Inverse Dynamics Disagreement.”</span> In <em>Advances in
+Neural Information Processing Systems 32</em>, edited by H. Wallach, H.
+Larochelle, A. Beygelzimer, F. dÁlché-Buc, E. Fox, and R. Garnett,
+239–49. Curran Associates, Inc. <a
+href="http://papers.nips.cc/paper/8317-imitation-learning-from-observations-by-minimizing-inverse-dynamics-disagreement.pdf">http://papers.nips.cc/paper/8317-imitation-learning-from-observations-by-minimizing-inverse-dynamics-disagreement.pdf</a>.
+</div>
+<div id="ref-Zhao2023-vm" class="csl-entry" role="listitem">
+Zhao, Tony Z, Vikash Kumar, Sergey Levine, and Chelsea Finn. 2023.
+<span>“Learning Fine-Grained Bimanual Manipulation with Low-Cost
+Hardware.”</span> In <em>Proceedings of Robotics: Science and
+Systems</em>.
+</div>
+<div id="ref-zheng2022imitation" class="csl-entry" role="listitem">
+Zheng, Boyuan, Sunny Verma, Jianlong Zhou, Ivor W Tsang, and Fang Chen.
+2022. <span>“Imitation Learning: Progress, Taxonomies and
+Challenges.”</span> <em>IEEE Transactions on Neural Networks and
+Learning Systems</em>, no. 99: 1–16.
+</div>
+<div id="ref-Ziebart:2008:MEI:1620270.1620297" class="csl-entry"
+role="listitem">
+Ziebart, Brian D., Andrew Maas, J. Andrew Bagnell, and Anind K. Dey.
+2008. <span>“Maximum Entropy Inverse Reinforcement Learning.”</span> In
+<em>Proceedings of the 23rd National Conference on Artificial
+Intelligence - Volume 3</em>, 1433–38. AAAI’08. Chicago, Illinois: AAAI
+Press. <a
+href="http://dl.acm.org/citation.cfm?id=1620270.1620297">http://dl.acm.org/citation.cfm?id=1620270.1620297</a>.
+</div>
+</div>
