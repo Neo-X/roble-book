@@ -27,6 +27,7 @@ Quick reference for common tasks:
 | Task | Where to edit |
 |------|--------------|
 | Sync chapter content from source repo | Run `./buildbook.sh` from repo root |
+| Run the site locally | `make serve` from repo root (never run `jekyll` bare from repo root — it only finds `docs/_config.yml` if you `cd docs` first) |
 | Add/change a lecture's metadata or description | `docs/_lectures/lecXX.md` front matter |
 | Wire up a YouTube video ID | `docs/_lectures/lecXX.md` → set `youtube_id:` |
 | Link a slides PDF | `docs/_lectures/lecXX.md` → set `slides_url:` |
@@ -55,9 +56,11 @@ roble-book/
   buildbook.sh       ← sync content from RobotLearningLectures + build
   PROGRESS.md        ← todo list and milestone tracker
   .gitignore
+  Gemfile            ← Ruby gem versions (bundler finds this from any subdir, incl. docs/)
+  Gemfile.lock
+  vendor/            ← installed gems (bundle install, gitignored)
   docs/              ← Jekyll site root (GitHub Pages serves from here)
     _config.yml      ← site metadata, collection config, gem settings
-    Gemfile          ← Ruby gem versions
     index.md         ← home page
     _lectures/
       lecXX.md       ← metadata header per lecture (front matter only)

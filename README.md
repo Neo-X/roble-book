@@ -8,14 +8,15 @@ GitHub Pages site for Glen Berseth's Robot Learning course (Université de Montr
 
 ## Local Development
 
-Gems are installed locally into `docs/vendor/bundle` (not system-wide).
+The `Gemfile` lives at the repo root; gems are installed locally into `vendor/bundle` (not system-wide). The Jekyll site itself lives in `docs/` (required by GitHub Pages' "/docs" deploy setting), and Jekyll only looks for `_config.yml` in the current directory — running `jekyll` directly from the repo root silently uses the wrong site source. Use the `Makefile` targets to always run everything correctly from the repo root:
 
 ```bash
-cd docs
-bundle install          # first time only
-bundle exec jekyll serve --baseurl ""
-# → open http://localhost:4000
+make install   # bundle install, first time only
+make serve     # → open http://localhost:4000
+make build     # one-off build, output in docs/_site
 ```
+
+If you'd rather run `bundle exec jekyll ...` directly, `cd docs` first.
 
 The `--baseurl ""` override prevents the `/roble-book` production prefix from breaking local links.
 

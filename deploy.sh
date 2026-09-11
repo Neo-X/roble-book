@@ -30,6 +30,7 @@ lftp -c "
   set ssl:verify-certificate no
   open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST
   mirror --reverse --delete --verbose \
+    --exclude-glob assets/chapters/ \
     $LOCAL_DIR/ $REMOTE_DIR/
   bye
 "

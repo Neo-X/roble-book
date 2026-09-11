@@ -1,6 +1,6 @@
 .DS_Store
 .env
-docs/vendor/
-docs/.bundle/
+vendor/
+.bundle/
 docs/_site/
 docs/.jekyll-cache/
