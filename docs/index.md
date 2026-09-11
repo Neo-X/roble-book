@@ -14,6 +14,20 @@ Slides and book chapters are drawn from three years of the graduate course at Un
 </div>
 </section>
 
+<section class="video-embed">
+<div class="container">
+<div class="video-wrapper">
+  <iframe
+    src="https://www.youtube.com/embed/1ZuvCWvj0HM"
+    title="Lecture 00: What Is Robot Learning?"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+</div>
+</div>
+</section>
+
 <section class="wip-notice">
 <div class="container">
 <p>
@@ -50,7 +64,6 @@ Slides and book chapters are drawn from three years of the graduate course at Un
       {% endif %}
       {% if lec.slides_url %}<span class="tag tag-slides">Slides</span>{% endif %}
       {% if lec.colab_url %}<span class="tag tag-colab">Colab</span>{% endif %}
-      {% if lec.chapter_url %}<span class="tag tag-chapter">Chapter</span>{% endif %}
     </div>
   </div>
 </a>

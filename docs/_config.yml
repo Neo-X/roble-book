@@ -9,6 +9,10 @@ url: "https://robotlearningbook.com"
 youtube_playlist: "https://youtube.com/playlist?list=PLMe2pHxzxHp-UJ1jd-uuGSGK7P7Phtm-f"
 author_url: "https://fracturedplane.com/"
 
+# Book chapters aren't ready for the public yet — flip to true to re-enable
+# the "Chapter PDF" button and embedded chapter text on lecture pages.
+chapters_public: false
+
 collections:
   lectures:
     output: true
