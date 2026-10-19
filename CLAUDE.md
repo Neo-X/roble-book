@@ -41,7 +41,8 @@ Quick reference for common tasks:
 
 - **Chapter subdirectories (`_lectures/lecXX-Name/`) are never published as pages.** They exist only as source input for the `ChapterGenerator` plugin. Jekyll is configured to suppress them via `defaults` entries in `_config.yml` — one entry per chapter directory. When adding a new chapter via `buildbook.sh`, add a matching `published: false` default to `_config.yml`.
 - **`lecXX.md` files are metadata-only headers.** Do not add prose body content to them. The chapter body is injected by the `lecture.html` layout using the `chapter_content_include` front matter field.
-- **Never edit files under `_lectures/lecXX-Name/` or `assets/chapters/lecXX-Name/` directly.** They are overwritten by `buildbook.sh` on the next sync. Edit the source in `../RobotLearningLectures/` instead.
+- **Never edit files under `_lectures/lecXX-Name/` or `assets/chapters/lecXX-Name/` directly.** `text.md`, `figures/` and `chapter.pdf` there are symlinks into `../RobotLearningLectures/` (made by `buildbook.sh`), so edit the source there, and never replace a link with a copied file.
+- **Never edit `docs/about-this-book.md` directly.** `buildbook.sh` regenerates it (and any other page) from `../RobotLearningLectures/front-matter/*.md`, which is also the book's front matter.
 
 See **[README.md](README.md)** for the full chapter structure and workflow details.
 

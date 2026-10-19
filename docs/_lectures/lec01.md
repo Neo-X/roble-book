@@ -5,6 +5,7 @@ track: "Behavior Cloning & Imitation"
 youtube_id: "5hNxQ1l_Ago"
 slides_url: "https://drive.google.com/file/d/1VvM-1-PcuYcd7oLJYQEIv8-XBQrNAM6n/view"
 colab_url: "https://colab.research.google.com/drive/1QY29NpcIqkKMGoslbXdSzs_o3CPraHl7"
+chapter_public: true
 chapter_url: "/assets/chapters/lec01-SupervisedLearning/chapter.pdf"
 chapter_content_include: "chapters/lec01-SupervisedLearning-content.html"
 readings:

@@ -9,8 +9,17 @@ url: "https://robotlearningbook.com"
 youtube_playlist: "https://youtube.com/playlist?list=PLMe2pHxzxHp-UJ1jd-uuGSGK7P7Phtm-f"
 author_url: "https://fracturedplane.com/"
 
+# "Cite this book" BibTeX shown in every page footer (_includes/footer.html).
+# Title matches the cover (RobotLearningLectures/cover.tex).
+citation:
+  key: "berseth2026robotlearning"
+  title: "Foundations of Robot Learning: Scaling Learning for Real-World Agents"
+  year: "2026"
+  url: "https://robotlearningbook.com/"   # fixed: `jekyll serve` rewrites site.url to localhost
+
 # Book chapters aren't ready for the public yet — flip to true to re-enable
 # the "Chapter PDF" button and embedded chapter text on lecture pages.
+# To publish a single chapter, set `chapter_public: true` in its _lectures/lecXX.md.
 chapters_public: false
 
 collections:
@@ -46,3 +55,21 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - "*.gemspec"
+  # assets/chapters/<lec>/figures are symlinks to the lecture repo's figures/
+  # (see buildbook.sh); publish only the images, not scripts or LaTeX output.
+  - "scripts"
+  - "*.py"
+  - "*.built"
+  - "*.aux"
+  - "*.log"
+  - "*.tex"
+  - "*.bbl"
+  - "*.blg"
+  - "*.out"
+  - "*.toc"
+  - "*.mp4"
+  - "*.snm"
+  - "*.nav"
+  - "*.vrb"
+  - "assets/chapters/*/figures/*.pdf"
+  - "assets/chapters/*/figures/**/*.pdf"

@@ -1,0 +1,24 @@
+<footer>
+  <div class="container">
+    <p>
+      Course materials by <a href="{{ site.author_url }}" target="_blank">{{ site.author }}</a> &middot;
+      <a href="https://mila.quebec" target="_blank">Mila - Quebec AI Institute</a> /
+      <a href="https://diro.umontreal.ca" target="_blank">Université de Montréal</a> &middot;
+      <a href="{{ '/about-this-book/' | relative_url }}">How this book is made</a>
+    </p>
+    {%- comment -%} A doubled opening brace starts a Liquid tag, so BibTeX's opening braces come from lb. {%- endcomment -%}
+    {%- assign c = site.citation -%}
+    {%- assign lb = "{" %}
+    <details class="cite" open>
+      <summary>Cite this book</summary>
+      <pre id="cite-bibtex">@misc{{ lb }}{{ c.key }},
+  title  = {{ lb }}{{ c.title }}},
+  author = {{ lb }}{{ site.author }}},
+  year   = {{ lb }}{{ c.year }}},
+  url    = {{ lb }}{{ c.url }}}
+}</pre>
+      <button type="button" class="cite-copy"
+        onclick="navigator.clipboard.writeText(document.getElementById('cite-bibtex').textContent).then(() => { this.textContent = 'Copied'; setTimeout(() => this.textContent = 'Copy BibTeX', 1500); })">Copy BibTeX</button>
+    </details>
+  </div>
+</footer>

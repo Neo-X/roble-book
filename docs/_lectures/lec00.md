@@ -6,6 +6,7 @@ youtube_id: "1ZuvCWvj0HM"
 youtube_id_2: "f7eiPAqFjIw"
 slides_url: "https://drive.google.com/file/d/16liEB8Pd-DBUm5Z41tqeR9sbUZSiqvCr/view"
 colab_url:
+chapter_public: true
 chapter_url: "/assets/chapters/lec00-WhatIsRobotLearning/chapter.pdf"
 chapter_content_include: "chapters/lec00-WhatIsRobotLearning-content.html"
 readings:

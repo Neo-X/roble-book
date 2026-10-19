@@ -1,0 +1,33 @@
+I"Þ<p>The <a href="https://github.com/milarobotlearningcourse/robot_learning_2025/tree/main">programming assignments</a> cover topics that are important for performing research on combining machine learning and robots. They cover:</p>
+
+<ul>
+  <li>Behaviour cloning and imitation learning</li>
+  <li>World Models and Planning</li>
+  <li>Model-free (PPO) and model-based RL methods (DDPG or PETS)</li>
+  <li>Exploration and pretraining methods, such as HRL and goal-conditioned RL</li>
+  <li>Offline reinforcement learning and exploration</li>
+  <li>Scaling deep RL algorithms</li>
+</ul>
+
+<p>The assignments are also designed to familiarize students with the software needed to perform research:</p>
+
+<ul>
+  <li>Deep learning libraries, such as PyTorch</li>
+  <li>Hardware constraints when working with real robots (power, compute, mechanical limits)</li>
+  <li>Distributed computing for running proper experiments</li>
+  <li>Visualization and analysis (the most important part)</li>
+</ul>
+
+<p>If we have five assignments, you can drop your lowest mark.</p>
+
+<h3 id="late-policy">Late Policy</h3>
+
+<ul>
+  <li>You have <strong>7 late days</strong> you can use for assignments.</li>
+  <li>Grades may be reduced by <strong>10% per late day</strong> after your late days are exhausted.</li>
+</ul>
+
+<div class="wip-notice">
+  The assignments are a work in progress. Check the <a href="https://github.com/milarobotlearningcourse" target="_blank">milarobotlearningcourse GitHub</a> for the latest releases.
+</div>
+:ET

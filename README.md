@@ -32,15 +32,15 @@ Textbook chapter prose lives in the companion repo **`../RobotLearningLectures/`
 ./buildbook.sh --no-build # sync without building
 ```
 
-`buildbook.sh` copies three things per lecture from `../RobotLearningLectures/<src-name>/`:
+`buildbook.sh` links (relative symlinks, never copies) three things per lecture from `../RobotLearningLectures/<src-name>/`, plus the figures/ of any other lecture a chapter borrows from and the shared pandoc inputs in `_pandoc/`:
 
-| Source (RobotLearningLectures) | Destination (roble-book/docs) |
+| Source (RobotLearningLectures) | Link in roble-book/docs |
 |-------------------------------|-------------------------------|
 | `<src-name>/text.md` | `_lectures/<src-name>/text.md` |
 | `<src-name>/figures/` | `assets/chapters/<src-name>/figures/` |
 | `<src-name>/chapter.pdf` | `assets/chapters/<src-name>/chapter.pdf` |
 
-LaTeX build artifacts (`.aux`, `.log`, `.tex`, `.pdf` in figures, `.mp4`, etc.) are excluded from the figures sync.
+Only the links are committed here, so images live in one place. The `exclude` list in `docs/_config.yml` keeps everything in `figures/` except images (scripts, `.aux`, `.tex`, figure PDFs, ...) out of `_site`, and `docs/_plugins/dereference_symlinks.rb` replaces linked files in `_site` with real copies so `deploy.sh` uploads files, not links. Deploying therefore needs `../RobotLearningLectures` checked out next to this repo, with each chapter's `chapter.pdf` built.
 
 To add a new lecture chapter, add one line to the `LECTURE_MAP` in `buildbook.sh`:
 
@@ -86,7 +86,7 @@ Static image assets served by Jekyll. Referenced in `text.md` as `../lec00-WhatI
 
 ### 4. Chapter PDF — `docs/assets/chapters/<src-name>/chapter.pdf`
 
-Pre-built PDF, linked by the "Chapter PDF" button. Copied from the source repo by `buildbook.sh`.
+Pre-built PDF, linked by the "Chapter PDF" button. A symlink to the source repo's `chapter.pdf`, which `make chapter` builds there.
 
 ---
 

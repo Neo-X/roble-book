@@ -435,6 +435,50 @@ a.card-link:hover { text-decoration: none; }
   height: auto;
   border-radius: var(--radius);
 }
+/* ::: {.figure-row} in text.md — figures side by side, stacking on narrow screens */
+.lecture-body .figure-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+.lecture-body .figure-row figure {
+  flex: 1 1 240px;
+  margin: 1rem 0;
+}
+/* Same frame for every image in a row so captions line up */
+.lecture-body .figure-row figure img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+/* Algorithm / definition boxes (numalgblock, block in text.md, converted by
+   flatten-layout.lua). Same palette as the PDF: figBG fill, figGood frame. */
+.lecture-body .algorithm {
+  margin: 1.8rem 0;
+  border: 1.5px solid #2F5F7E;
+  border-radius: var(--radius);
+  background: #F5FAFD;
+  overflow: hidden;
+}
+.lecture-body .alg-title {
+  background: #2F5F7E;
+  color: #fff;
+  font-weight: 700;
+  padding: .45rem .9rem;
+}
+.lecture-body .alg-title a { color: #fff; }
+.lecture-body .alg-body { padding: .6rem .9rem .7rem; }
+.lecture-body .alg-line { line-height: 1.6; }
+.lecture-body .alg-no {
+  display: inline-block;
+  min-width: 1.8em;
+  color: #5B6B73;
+  font-size: .85em;
+}
+.lecture-body .alg-comment { color: #5B6B73; float: right; }
+.lecture-body .alg-comment::before { content: "▷ "; }
 .lecture-body figcaption {
   margin-top: .6rem;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -467,6 +511,27 @@ footer {
   text-align: center;
 }
 footer a { color: var(--link); }
+footer .cite { margin-top: .4rem; }
+footer .cite summary { cursor: pointer; color: var(--faint); }
+footer .cite pre {
+  display: inline-block;
+  margin: .5rem auto .2rem;
+  text-align: left;
+  font-size: .75rem;
+  color: var(--faint);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+footer .cite-copy {
+  display: block;
+  margin: 0 auto;
+  font: inherit;
+  font-size: .75rem;
+  border: none;
+  background: none;
+  color: var(--link);
+  cursor: pointer;
+}
 
 /* ── Responsive ── */
 @media (max-width: 640px) {

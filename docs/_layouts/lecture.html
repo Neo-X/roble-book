@@ -42,7 +42,8 @@
         Download Slides
       </a>
       {% endif %}
-      {% if site.chapters_public and page.chapter_url %}
+      {% assign show_chapter = site.chapters_public | default: page.chapter_public %}
+      {% if show_chapter and page.chapter_url %}
       <a class="btn btn-chapter" href="{{ page.chapter_url }}" target="_blank">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-7 14H8v-2h4v2zm4-4H8v-2h8v2zm0-4H8V6h8v2z"/></svg>
         Chapter PDF
@@ -111,7 +112,7 @@
     </div>
     {% endif %}
 
-    {% if site.chapters_public and page.chapter_content_include %}
+    {% if show_chapter and page.chapter_content_include %}
     <div class="chapter-content">
       {% include {{ page.chapter_content_include }} %}
     </div>
@@ -127,15 +128,7 @@
   </div>
 </nav>
 
-<footer>
-  <div class="container">
-    <p>
-      Course materials by <a href="{{ site.author_url }}" target="_blank">{{ site.author }}</a> &middot;
-      <a href="https://mila.quebec" target="_blank">Mila - Quebec AI Institute</a> /
-      <a href="https://diro.umontreal.ca" target="_blank">Université de Montréal</a>
-    </p>
-  </div>
-</footer>
+{% include footer.html %}
 
 </body>
 </html>

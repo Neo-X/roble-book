@@ -1,0 +1,1368 @@
+<!-- # Ingredients and Challenges in Real-World (Robot) Learning -->
+<h4 id="why-study-robotics">Why Study Robotics?</h4>
+<p>Robots are already in the news, and the money being invested in them
+keeps climbing, which is itself a signal that something important is
+still missing. If robotics worked as well as it appears to in demo
+videos, this would not be a research field — it would be a solved
+engineering problem. This course is about the gap between the two: why
+current systems fall short of the robots we actually envision, and what
+has to change to close that gap. Understanding the revolution underway
+requires first taking an honest look at where things stand today.</p>
+<h4 id="robots-common-but-limited">Robots: Common, But Limited</h4>
+<figure id="fig:robot-eric">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/eric-the-robot.jpg" style="width:50.0%"
+alt="Eric, one of the earliest documented humanoid robots, built in 1928 by W. H. Richards and Alan Reffell." />
+<figcaption aria-hidden="true">Eric, one of the earliest documented
+humanoid robots, built in 1928 by W. H. Richards and Alan
+Reffell.</figcaption>
+</figure>
+<p>Robots are not new. They have been around for a long time and are
+already all around us, as <a href="#fig:robot-eric">Figure</a> shows.
+<em>Eric</em> (1928), built by W. H. Richards and Alan Reffell for the
+Society of Model Engineers exhibition in London, is one of the earliest
+documented humanoid robots. Constructed from aluminium with eleven
+electromagnetic motors, Eric could rise from a seated position, deliver
+pre-programmed speeches, and turn his head — all controlled by radio
+signals or voice commands. He toured England and the United States to
+considerable public fascination. The mechanical idea of a robot, in
+other words, long preceded any capacity for learning or adaptation. A
+faithful reconstruction now resides at the Science Museum in London.</p>
+<p>Robots today are essential helpers in a handful of key industries. In
+manufacturing they assemble cars on a factory line; in fulfillment they
+package and sort items in large warehouses; in transportation they move
+materials around controlled areas like hospitals or factories. In every
+one of these settings, though, the skills involved are severely
+limited.</p>
+<h4 id="the-brittleness-of-current-systems">The “Brittleness” of Current
+Systems</h4>
+<p>The limitation is structural: most robots operate in highly
+controlled environments. Consider the robots attaching doors on a car
+assembly line. They don’t require “intelligence” or even “eyes” — they
+execute the same repetitive process over and over, inside a
+manufacturing process engineered to tolerances small enough that
+adaptability is never needed. This is what a pre-scripted behavior is: a
+very limited ability to respond to anything outside exact programming,
+with examples in <a href="#fig:current-robot-use">Figure</a>.</p>
+<figure id="fig:current-robot-use">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/current-robot-use.svg" style="width:80.0%"
+alt="Current robots are deployed in controlled, repetitive settings such as manufacturing, fulfillment, and transportation." />
+<figcaption aria-hidden="true">Current robots are deployed in
+controlled, repetitive settings such as manufacturing, fulfillment, and
+transportation.</figcaption>
+</figure>
+<h2 id="robots-can-be-better-tools">Robots can be Better Tools</h2>
+<figure id="fig:future-robot-use">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/future-robot-use.svg" style="width:80.0%"
+alt="A range of prospective future robot applications, from household assistance to ecological restoration to flexible manufacturing." />
+<figcaption aria-hidden="true">A range of prospective future robot
+applications, from household assistance to ecological restoration to
+flexible manufacturing.</figcaption>
+</figure>
+<h3 id="robots-as-better-tools-for-society">Robots as Better Tools for
+Society</h3>
+<p>Pursuing more advanced robotics is not merely a technical exercise;
+it is an attempt to build tools that materially improve human life and
+societal resilience. The next generation of robotic systems can address
+several needs that go beyond simple automation, moving toward genuine
+augmentation of human capability.</p>
+<h4 id="reclaiming-time-for-creativity-and-care">Reclaiming Time for
+Creativity and Care</h4>
+<p>One of the most direct benefits of advanced robotics is reclaiming
+human time. Automating mundane or laborious tasks — household chores,
+maintenance, manual labor — frees people to pursue creative,
+intellectual, or restorative activities instead.</p>
+<p>History offers a useful example. Albert Einstein developed some of
+his most important ideas while working at a patent office, using his
+spare time for deep, creative thought. Reducing the burden of obligatory
+labor maximizes this kind of space for more create mental or manual
+work. In addition, it frees up time for people who otherwise might not
+have had access to it — those with disabilities or other limitations,
+for example, or those in remote areas where there is no one around to
+help them. The same reclaimed time could fund large-scale, long-term
+projects that are currently unfeasible. Ecological restoration is one
+example: the dedicated, long-term care needed to plant and tend new
+forests can revitalize entire landscapes and rebuild ecosystems.</p>
+<h4 id="enhancing-human-agency-and-support">Enhancing Human Agency and
+Support</h4>
+<p>Robotics can also enhance human agency directly, particularly for
+aging populations or people who need assistance. As people age, daily
+tasks become harder and support systems are often strained. Intelligent
+robotic systems that assist with mobility or household management can
+provide critical support — greater independence, dignity, and quality of
+life — precisely where human caregiving capacity is limited.</p>
+<h4 id="building-agile-and-responsive-production">Building Agile and
+Responsive Production</h4>
+<p>The current model of mass production is rigid. It is highly efficient
+at producing large quantities of a single item, and exceptionally slow
+and costly to adapt to a different one. That inflexibility is a real
+liability.</p>
+<p>Building a new manufacturing line — for an electric car, say — can
+take five years to construct the facility and another five to install
+and fine-tune the automated systems. A ten-year lag from concept to
+production is untenable in a world that changes at an accelerating pace;
+a ten-year plan is often obsolete within three or four years.</p>
+<p>Society needs the ability to adjust much faster, whether responding
+to a public health crisis that demands rapid vaccine production or
+adapting to new economic and environmental realities. More adaptable
+robotics is what makes a responsive manufacturing base — one that can be
+re-tasked quickly — possible.</p>
+<h4 id="efficiency-in-space-and-resource-management">Efficiency in Space
+and Resource Management</h4>
+<p>Robotics can also make society more efficient with its use of space
+and resources. Several companies already use robotics to sort and
+process waste, enabling recycling at rates manual sorting cannot
+match.</p>
+<p>The same principle extends to food production. Indoor vertical
+farming uses space far more efficiently than traditional agriculture,
+and robotics can manage the planting, care, and harvesting that make it
+possible to expand these operations. Because vertical farming does not
+rely on the pesticides and chemicals that contaminate water supplies,
+scaling it up preserves a critical natural resource while increasing
+food security.</p>
+<p>More time, greater agency, responsive production, resource efficiency
+— these benefits, illustrated in
+<a href="#fig:future-robot-use">Figure</a>, are compelling enough to
+motivate the field. They also frame the question this course spends the
+rest of its time on: how must research advance to achieve these goals at
+a responsible and effective pace?</p>
+<h2 id="vision-based-manipulation">Vision-Based Manipulation</h2>
+<p>Many of the ideas behind intelligent robots started out of a few
+robotics labs. In 1959, MIT’s Lincoln Laboratory used the TX-0 — one of
+the first transistorized computers — to run some of the earliest machine
+vision experiments, extracting lines and edges from photographs and
+reasoning about the three-dimensional objects those photographs
+depicted, as documented in <a
+href="https://infinite.mit.edu/video/eye-robot-studies-machine-vision-mit-and-tx-o-computer-1959/"><em>Eye
+of the Robot: Studies in Machine Vision with MIT and the TX-0 Computer
+(1959)</em></a>. That effort grew, over the following decade, into the
+MIT AI Lab’s “copy demo”: a program that parsed a photograph of a block
+structure, inferred the arrangement of arches, pedestals, and tables it
+contained, and then drove a robotic arm to physically reconstruct the
+same structure from a pile of blocks. Marvin Minsky’s students — Patrick
+Winston, David Waltz, Timothy Finin, Rich Boberg, David Silver, and
+Scott Fahlman among them — split the problem into pieces that are still
+recognizable in modern robot learning pipelines: segmenting a scene into
+objects, disambiguating shadows from physical edges, inferring 3D
+structure from a 2D image, and planning a sequence of actions that
+reproduces a target configuration.</p>
+<p>At the same time, similar efforts elsewhere connected vision more
+directly to physical action. Stanford’s AI Lab mounted a camera above
+the Stanford Arm and used it to guide the arm through solving the <a
+href="https://youtu.be/O1oJzUSlTeY">“Instant Insanity” puzzle</a> —
+matching colored faces of four cubes by sight rather than by hand-coded
+coordinates, one of the first demonstrations of a robot manipulator
+acting on what it perceived rather than on a pre-programmed trajectory.
+SRI International’s <a href="https://youtu.be/GmU7SimFkpU">Shakey</a>,
+developed between 1966 and 1972, went further still, combining a camera,
+a range finder, and touch sensors with logical planning (STRIPS) and
+simple learning so that a single mobile robot could perceive a room,
+reason about which actions would achieve a goal, and execute a plan —
+making it the first robot widely credited with general-purpose reasoning
+about its own actions. These early systems were narrow and slow by
+today’s standards, but they established the recurring structure of
+vision-based manipulation that the rest of this course builds on:
+perceive the scene, infer its structure, plan a sequence of actions, and
+act on that plan in the physical world.</p>
+<h3 id="generalist-robotics-policies">Generalist Robotics Policies</h3>
+<figure id="fig:grp">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/GRP.png" style="width:70.0%"
+alt="A Generalist Robotics Policy (GRP): a single agent capable of performing a wide range of tasks across diverse embodiments." />
+<figcaption aria-hidden="true">A Generalist Robotics Policy (GRP): a
+single agent capable of performing a wide range of tasks across diverse
+embodiments.</figcaption>
+</figure>
+<figure id="fig:morph-task-grid">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/morphology-task-grid.svg" style="width:55.0%"
+alt="The tasks-by-morphologies grid: rows represent robot embodiments, columns represent tasks. An ideal GRP achieves high performance across the full grid." />
+<figcaption aria-hidden="true">The tasks-by-morphologies grid: rows
+represent robot embodiments, columns represent tasks. An ideal GRP
+achieves high performance across the full grid.</figcaption>
+</figure>
+<p>A central question in modern robotics is whether a Generalist
+Robotics Policy (GRP) is feasible: a single agent, illustrated in
+<a href="#fig:grp">Figure</a>, that adapts across many tasks and
+environments. Decades of research have chased this objective, and it
+remains difficult because flexibility, sample efficiency, and stability
+all have to improve together — none of them can be solved in isolation
+and designing solutions that improve performance in all directions is
+challenging.</p>
+<p>The tasks-by-morphologies grid in
+<a href="#fig:morph-task-grid">Figure</a> gives the GRP objective a
+concrete shape. Each row is a robot embodiment — wheeled platform,
+robotic arm, humanoid — and each column a task such as folding laundry,
+opening doors, or driving a car. An ideal system achieves high
+performance across the full grid while sampling as few task-policy
+combinations as possible; formally, this is minimizing cumulative regret
+across all tasks and morphologies. Framed this way, generalization,
+interaction-based learning, and sample efficiency stop looking like
+separate desiderata: covering the grid without exhaustively sampling
+every cell requires all three at once.</p>
+<p>Why building such a system is hard becomes clearer by tracing the
+strategies the field has already tried. The first is pure engineering: a
+domain expert analyzes a specific task, designs a custom algorithm, and
+programs fixed behaviors for tightly controlled conditions. This
+produces capable but narrow systems — a robotic arm tuned to assemble
+exactly one product, in one factory, under one set of lighting
+conditions, with no ability to adapt when any variable changes.</p>
+<p>The second strategy replaces explicit programming with learning from
+demonstrations or data. A dataset of expert behaviors trains a policy to
+replicate them, and under favorable conditions the policy generalizes
+across minor variations. This is more flexible than scripted engineering
+and transfers more naturally across robots and task variants, but
+performance is still bounded by the diversity and coverage of the
+demonstration dataset — a task or condition absent from the data cannot
+be handled reliably.</p>
+<p>The third strategy introduces autonomous interaction: instead of
+specifying how to behave, the designer specifies what counts as success
+through a score function that rewards or penalizes behaviors. This is
+more flexible than learning from demonstrations but requires an explicit
+score function, and the agent improves by acting in the world and
+receiving feedback. This makes it possible, in principle, to learn
+behaviors that exceed the quality of any human demonstration and to
+discover solutions nobody anticipated at design time.</p>
+<p>A genuinely generalist system needs three capabilities to survive
+this progression. It must generalize beyond the exact situations seen in
+training, across both tasks and embodiments. It must learn from
+interaction so performance keeps improving after deployment instead of
+freezing at the limits of a fixed dataset. And it must support practical
+task and reward specification, so human intent can be communicated
+precisely enough for reliable control.</p>
+<p>Contextual understanding is what ties these three together. A
+monolithic policy that treats all actions as equally relevant in every
+situation is usually too broad to train stably. More effective agents
+condition their decisions on context, narrowing the action set to what
+matters in the present situation — preserving broad competence while
+keeping decision-making tractable.</p>
+<h1 id="notation-setup">Notation Setup</h1>
+<figure id="fig:vgg16-policy">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/vgg16-policy-choice.png" style="width:95.0%"
+alt="A deep network policy \pi(\textbf{a}_t, \textbf{o}_t, \theta) mapping raw image observations to discrete or continuous actions." />
+<figcaption aria-hidden="true">A deep network policy <span
+class="math inline">\(\pi(\textbf{a}_t, \textbf{o}_t, \theta)\)</span>
+mapping raw image observations to discrete or continuous
+actions.</figcaption>
+</figure>
+<p><a href="#fig:vgg16-policy">Figure</a> shows a concrete instance of
+this mapping: raw image input passes through a deep network to produce
+an action selection — turning left or right. Making this notation
+operational requires treating state and observation as distinct objects
+with different informational content. In robotics, state is usually
+numerical: joint angles, link velocities, orientation terms such as
+quaternions. These features characterize the robot’s proprioceptive
+configuration and connect directly to classical configuration-space
+formulations~<span class="citation" data-cites="schwartz1983piano">(<a
+href="#ref-schwartz1983piano" role="doc-biblioref">Schwartz and Sharir
+1983</a>)</span>.</p>
+<p>A state representation ideally contains the full decision-relevant
+description of the world at time <span class="math inline">\(t\)</span>;
+an observation is only the sensor-level view available to the agent, and
+is often partial, e.g. a camera frame
+(<a href="#fig:observation-features">Figure</a>) can carry rich visual
+structure while still omitting physically important information outside
+the field of view.</p>
+<p>Two standard formulations follow from this. When the policy
+conditions on full state <span
+class="math inline">\(\textbf{s}_t\)</span>, the problem is an MDP and
+can be solved with a value function <span
+class="math inline">\(V_\theta(\textbf{s}_t)\)</span> and an
+action-value function <span
+class="math inline">\(q_\theta(\textbf{s}_t,a)\)</span>. When it
+conditions on partial observations, the problem is a POMDP<span
+class="citation" data-cites="kaelbling1998planning">(<a
+href="#ref-kaelbling1998planning" role="doc-biblioref">Kaelbling,
+Littman, and Cassandra 1998</a>)</span>, and latent information has to
+be tracked over time. Notation in the literature is not always
+consistent about which regime a paper assumes, but the underlying
+distinction is essential for interpreting what an algorithm assumes and
+how it can behave after learning.</p>
+<h2 id="notation-history">Notation History</h2>
+<div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:flex-start;">
+<figure id="fig:bellman" style="width:45%; text-align:center;">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/Richard_Bellman.png" style="max-width:100%;" />
+<figcaption>Richard Bellman [bellman1957markovian], whose dynamic programming framework established the RL notation convention of $\da_t$ for actions and $\st$ for states.</figcaption>
+</figure>
+<figure id="fig:pontryagin" style="width:45%; text-align:center;">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/Lev-Pontrjagin.jpg" style="max-width:100%;" />
+<figcaption>Lev Pontryagin [pontrjagin1962mathematical], whose optimal control work established the robotics convention of $u_t$ for commands and $x_t$ for states.</figcaption>
+</figure>
+</div>
+<p>Notation in robot learning carries the marks of the field’s mixed
+lineage. Reinforcement learning conventions descend from Bellman-style
+dynamic programming (<a href="#fig:bellman">Figure</a>), where <span
+class="math inline">\(\textbf{a}_t\)</span>, <span
+class="math inline">\(\textbf{o}_t\)</span>, and <span
+class="math inline">\(\textbf{s}_t\)</span> are standard. Robotics and
+control instead follow Pontryagin-style notation
+(<a href="#fig:pontryagin">Figure</a>), where action and state appear as
+<span class="math inline">\(u_t\)</span> and <span
+class="math inline">\(x_t\)</span>.</p>
+<p>Neither notation is better; both encode closely related concepts
+through different historical traditions. The practical consequence is
+that readers must translate fluently across papers, or risk mistaking a
+symbolic difference for a conceptual one.</p>
+<p>That translation burden is part of what makes robot learning
+interdisciplinary. Progress requires comfort with machine learning,
+reinforcement learning, control theory, and parts of physics, each
+bringing its own assumptions and formal language to the table.</p>
+<h2 id="state-vs-observation">State vs Observation</h2>
+<figure id="fig:state-features">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/character_features.png"
+style="width:45.0%"
+alt="State features \textbf{s}_t: joint angles, link velocities, and other proprioceptive quantities describing the robot’s configuration." />
+<figcaption aria-hidden="true">State features <span
+class="math inline">\(\textbf{s}_t\)</span>: joint angles, link
+velocities, and other proprioceptive quantities describing the robot’s
+configuration.</figcaption>
+</figure>
+<figure id="fig:observation-features">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/saywerWithTowel.png"
+style="width:90.0%"
+alt="Observation features \textbf{o}_t: raw pixel images from a camera. True state generally cannot be inferred from a single frame." />
+<figcaption aria-hidden="true">Observation features <span
+class="math inline">\(\textbf{o}_t\)</span>: raw pixel images from a
+camera. True state generally cannot be inferred from a single
+frame.</figcaption>
+</figure>
+<p>State variables, in practical robotics, are numerical descriptors of
+configuration and dynamics: joint angles, link velocities, orientation
+terms, and related quantities, as
+<a href="#fig:state-features">Figure</a> shows. These features describe
+the robot’s proprioceptive condition and connect directly to
+configuration-space reasoning in classical robotics~<span
+class="citation" data-cites="schwartz1983piano">(<a
+href="#ref-schwartz1983piano" role="doc-biblioref">Schwartz and Sharir
+1983</a>)</span>.</p>
+<p>Observations are the sensor measurements actually available to the
+agent, which in many modern systems means pixels, as in
+<a href="#fig:observation-features">Figure</a>. Images carry rich scene
+information, but a single frame often cannot resolve velocity, contact
+forces, or direction of motion.</p>
+<p>The distinction matters because learning difficulty tracks
+observability. Control from state can exploit near-Markov structure
+directly; control from observations has to infer latent state from
+incomplete evidence first.</p>
+<h2 id="markov-property">Markov Property</h2>
+<figure id="fig:Markov-Property">
+<img src="/assets/chapters/lec01-SupervisedLearning/figures/markovproperty.svg"
+style="width:95.0%"
+alt="The Markov property expressed as a factor graph: once the current state \textbf{s}_t and action \textbf{a}_t are known, earlier variables can be marginalized for next-step prediction." />
+<figcaption aria-hidden="true">The Markov property expressed as a factor
+graph: once the current state <span
+class="math inline">\(\textbf{s}_t\)</span> and action <span
+class="math inline">\(\textbf{a}_t\)</span> are known, earlier variables
+can be marginalized for next-step prediction.</figcaption>
+</figure>
+<p>The Markov property states that the current state contains all the
+information required to choose an optimal action. Under this condition
+the policy needs no history — conditioning on the present state alone is
+sufficient for optimal decision-making.</p>
+<p>This assumption is powerful precisely because it simplifies
+optimization and analysis so much. Fully observed settings let
+algorithms exploit Markov structure directly. Partially observed
+settings do not: the observation itself may fail to be Markov, and the
+agent must infer latent state from history or learned memory before it
+can act.</p>
+<p><a href="#fig:Markov-Property">Figure</a> makes this compression
+explicit as a factor graph: once current state and action are known,
+earlier variables can be marginalized away for next-step prediction and
+control. Much of practical RL can be read as an attempt to recover
+useful Markov structure when the raw observations do not already have
+it.</p>
+<h2
+id="deep-reinforcement-learning-rl-with-non-linear-function-approximitors">Deep
+Reinforcement Learning (RL with Non-Linear Function Approximitors)</h2>
+<figure id="fig:deep-rl-overview">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image-2.png" style="width:95.0%"
+alt="The deep RL loop: image observation enters a deep network, an action is produced, the environment returns a reward, and gradients update the network weights." />
+<figcaption aria-hidden="true">The deep RL loop: image observation
+enters a deep network, an action is produced, the environment returns a
+reward, and gradients update the network weights.</figcaption>
+</figure>
+<p>Three broad strategies exist for programming a robot to perform a
+task, and placing deep RL among them clarifies what it actually offers.
+<a href="#fig:deep-rl-overview">Figure</a> shows the full loop: image
+input, deep network, action output, reward feedback.</p>
+<p>The first strategy is explicit engineering. A robotics engineer
+analyzes the task in full detail, designs a custom algorithm, and
+programs the robot with pre-scripted behaviors tuned to tight
+tolerances. This can achieve high precision in a fixed environment, but
+the resulting systems are brittle under even minor variation, slow to
+build — commissioning a single industrial robot cell can take years —
+and cannot be reused across different tasks or layouts.</p>
+<p>The second is imitation learning. Instead of programming behavior
+directly, a human demonstrates the desired behavior — teleoperating the
+robot, or providing recordings — and the policy is trained to reproduce
+those demonstrations. This is more flexible than explicit engineering:
+the same training framework applies regardless of the specific task, and
+the data can in principle transfer across robots and environments. Its
+central limitation is that performance is bounded by the scope and
+diversity of the demonstrations.</p>
+<p>The third is deep reinforcement learning. Instead of providing
+demonstrations, the designer specifies what success and failure mean —
+the reward function — and the robot learns by interacting with the
+environment. Deep RL replaces the manual feature engineering of earlier
+robotics with a general function approximator, typically a deep neural
+network, that maps raw observations such as images directly to actions
+such as joint torques. At each step the reward function evaluates the
+action taken, and the gradient is propagated back through the network to
+increase the probability of actions that led to higher reward. Repeated
+over many iterations, this converges toward a policy that achieves the
+specified objective without any human-scripted movement primitive.</p>
+<p>The power of this approach is its scope: any task describable through
+a reward function is potentially learnable, including tasks whose
+optimal strategy the designer never knew in advance. Its limitation,
+which this course addresses at length, is that the resulting policies
+are often specific to the exact conditions seen during training. Small
+changes in object appearance, lighting, or arrangement — changes a human
+would not even notice — can cause a policy to fail outright. Deep RL
+agents also require far more interaction data than humans need to
+acquire comparable competence.</p>
+<p>Poor generalization, difficulty scaling to larger models, and high
+data requirements — these three limitations motivate the core research
+agenda of this course.</p>
+<h1 id="generalizationreuse">Generalization/Reuse</h1>
+<figure id="fig:noisy-state">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image-11.png" style="width:45.0%"
+alt="Adding a single pixel to an input image is a trivial perturbation, yet it can break a policy trained without explicit robustness objectives." />
+<figcaption aria-hidden="true">Adding a single pixel to an input image
+is a trivial perturbation, yet it can break a policy trained without
+explicit robustness objectives.</figcaption>
+</figure>
+<p>Generalization is one of the most overused and underdefined terms in
+robotics. People say a model “generalizes” without specifying what
+changed, by how much, or whether performance stayed meaningfully high.
+<a href="#fig:noisy-state">Figure</a> makes the failure mode concrete:
+adding a single pixel to an input image is a trivial perturbation, and
+if it breaks the policy, the model was never robust in any practical
+sense. The opposite confusion is just as common — small perturbations
+get labeled “unseen tasks” when they are really just noisy versions of
+the same state.</p>
+<p>Everyday manipulation gives a sharper illustration. A person walking
+into an unfamiliar kitchen encounters cups, glasses, and mugs they have
+never seen, and does not pause to reconsider how to grasp them — lifting
+and drinking from a vessel transfers automatically. Robot policies fail
+in exactly this setting today. A policy trained on one coffee mug may
+work reliably for that mug and fail completely on a differently shaped
+or colored one, even though the underlying manipulation task is
+identical. The policy has overfit to the precise visual and dynamic
+properties of its training object, not to the invariant structure of the
+task.</p>
+<p>The deeper issue is that “in-distribution” and “out-of-distribution”
+are not binary labels with a universal boundary. Whether a change counts
+as out-of-distribution depends on task semantics, not pixel distance. A
+different cup color may be irrelevant to a grasping task and highly
+relevant to a color-sorting task. This is why careful definitions
+matter: robust to what, under what assumptions, evaluated by which
+operational metric?</p>
+<p>This course holds a high standard for generalization claims. Modest
+performance on small perturbations is not sufficient evidence. The
+relevant question is whether the policy remains capable when the world
+changes in the ways real deployments actually fail: sensor artifacts,
+object diversity, background variability, small but consequential
+context shifts. Only then is “generalization” a meaningful scientific
+claim rather than a vague aspiration.</p>
+<h2 id="finding-the-right-representation">Finding the Right
+Representation</h2>
+<figure id="fig:equivariance-invariance">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/equivariance-invariance.svg" style="width:90.0%"
+alt="Invariance and equivariance as representation design principles. Left: an equivariant representation preserves spatial structure — translating a scene shifts the feature map by the same amount. Right: an invariant representation discards nuisance variation — the same block at the same grid position rendered in three different colours all produce the same structural embedding (Lukacs and Petrescu 2021)." />
+<figcaption aria-hidden="true">Invariance and equivariance as
+representation design principles. <em>Left:</em> an equivariant
+representation preserves spatial structure — translating a scene shifts
+the feature map by the same amount. <em>Right:</em> an invariant
+representation discards nuisance variation — the same block at the same
+grid position rendered in three different colours all produce the same
+structural embedding <span class="citation"
+data-cites="lukacs2021sesn">(<a href="#ref-lukacs2021sesn"
+role="doc-biblioref">Lukacs and Petrescu 2021</a>)</span>.</figcaption>
+</figure>
+<p>Improving generalization starts with representation design. A
+representation should be invariant to factors the agent should ignore
+and equivariant to transformations that preserve meaningful structure,
+as <a href="#fig:equivariance-invariance">Figure</a> illustrates.
+Invariance and equivariance are not aesthetic mathematical properties
+here; they directly decide whether a policy survives ordinary deployment
+noise.</p>
+<p>A cat viewed from close up and far away is still a cat: moving the
+camera changes nearly every pixel, but not the underlying identity of
+the object. A good representation preserves that identity and refuses to
+base decisions on accidental image details. In control, this extends
+beyond recognition — the representation should preserve
+dynamics-relevant structure while suppressing everything irrelevant.</p>
+<p>Representation choices also expose hidden assumptions. When a
+representation fails to factor out nuisance variability, the
+practitioner compensates by assuming a static environment, controlled
+lighting, fixed backgrounds, or a narrow task setting. A
+better-structured representation relaxes those assumptions without
+sacrificing performance. In practice, representation quality is often
+the difference between a demo system and a deployable one.</p>
+<h2 id="connecting-experiences-together">Connecting Experiences
+Together</h2>
+<figure id="fig:trajectory-composition">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/trajectory-composition.svg" style="width:65.0%"
+alt="Trajectory composition (Ghugare et al. 2024): partial trajectories in a dataset can be stitched together to form novel routes between unseen start-goal pairs." />
+<figcaption aria-hidden="true">Trajectory composition <span
+class="citation" data-cites="Ghugare2024-xh">(<a
+href="#ref-Ghugare2024-xh" role="doc-biblioref">Ghugare et al.
+2024</a>)</span>: partial trajectories in a dataset can be stitched
+together to form novel routes between unseen start-goal
+pairs.</figcaption>
+</figure>
+<p>Invariance alone does not produce capable agents; a system also needs
+to reuse information aggressively. Humans do this constantly — nobody
+relearns how to leave home, navigate the streets, and enter a building
+from first principles each day. Prior experience gets composed and
+adapted to the current context, even as weather, timing, and surface
+details change.</p>
+<p>Trajectory composition is the control analogue, shown in
+<a href="#fig:trajectory-composition">Figure</a>: given a dataset of
+partial routes, an agent should be able to stitch fragments into a novel
+plan between start-goal pairs that are not contained in the dataset.
+This is intuitive on road networks, where intersections define obvious
+connection points. In robotics, overlap and compatibility between
+trajectories are latent, noisy, and high-dimensional, so stitching
+becomes a genuinely hard representation-and-planning problem <span
+class="citation" data-cites="Ghugare2024-xh">(<a
+href="#ref-Ghugare2024-xh" role="doc-biblioref">Ghugare et al.
+2024</a>)</span>. In addition, strong data reuse lets a finite dataset
+support broad transfer; weak reuse leaves the system sample-inefficient
+and brittle. Turning trajectory logs from a pile of isolated episodes
+into reusable, compositional knowledge is one of the central scientific
+questions in scalable robot learning.</p>
+<h2 id="taskable-agents">Taskable Agents</h2>
+<figure id="fig:goal-conditioned-scaling">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/goal-conditioned-scaling.svg" style="width:90.0%"
+alt="A training dataset of diverse goal images and goal-language strings feeds a single policy \pi(\textbf{a}_t\mid \textbf{s}_t, g, \theta) that generalises across all tasks at inference time." />
+<figcaption aria-hidden="true">A training dataset of diverse goal images
+and goal-language strings feeds a single policy <span
+class="math inline">\(\pi(\textbf{a}_t\mid \textbf{s}_t, g,
+\theta)\)</span> that generalises across all tasks at inference
+time.</figcaption>
+</figure>
+<p>Alongside the goals of data reuse and efficiency is
+<strong>taskability</strong>, how well agents follow provided goals and
+diversity of those goals.
+<a href="#fig:goal-conditioned-scaling">Figure</a> shows a single policy
+conditioned on language goals, scaled across a broad range of task
+specifications. The naive strategy — one policy per task — is
+memory-inefficient, hard to maintain, and scientifically unsatisfying,
+because it prevents transfer and parameter reuse. When each task has its
+own network, shared perception and control structure is wasted, and
+adding a new task scales poorly.</p>
+<p>A shared policy with an explicit task context variable, such as
+one-hot conditioning, is an improvement: it forces parameter sharing and
+cuts duplication. But one-hot conditioning does not generalize to unseen
+tasks without hand-engineered similarity or manual task indexing. Richer
+goal representations — language, multimodal conditioning — are the
+natural next step. The objective is not just selecting among known
+tasks, but representing task intent in a form that supports extension
+and reuse. Large language models offer a suggestive parallel: certain
+chunks of the network appear to activate preferentially for specific
+topic domains — recipe questions, code problems, factual lookup —
+behaving like implicit sub-policies selected by input context <span
+class="citation" data-cites="cai2025survey">(<a
+href="#ref-cai2025survey" role="doc-biblioref">Cai et al.
+2025</a>)</span>. If this characterization holds, scaling a single large
+model over broad text data may organically produce task-specialized
+decomposition without any explicit hierarchical design.</p>
+<p>Whether this implicit decomposition transfers cleanly to physical
+control is still open. Robotics has extensive experience with explicitly
+hierarchical policies, and those architectures frequently suffer at the
+interfaces between levels — the seams where high-level intent has to
+translate into low-level motor commands. A single large model that
+handles every level of abstraction fluidly, while still representing
+meaningful task-specific structure internally, remains one of the
+central open problems in generalist robot learning.</p>
+<h2 id="good-results">Good Results</h2>
+<!-- Better to move this to a later section for a summary -->
+<p>Demonstration clips matter because they show language- and
+goal-conditioned policies executing nontrivial manipulation tasks with
+real success. Placing a banana in a bowl, placing a bottle in a tray —
+these indicate that scaling behavior cloning with richer conditioning
+produces practical capabilities, not just toy outcomes. However, demo
+videos establish possibility, not reliability. A successful clip says
+nothing about failure rate under perturbation, robustness to object
+diversity, long-horizon consistency, or recovery from error states. Even
+the tooling around communicating results is fragile — media embedding
+failures in demo slides are a small but honest reminder that real
+workflows are messy well before deployment enters the picture.</p>
+<p>The right conclusion is balanced: these systems are already useful
+and impressive in constrained settings, but they remain far from
+open-world competence. The research challenge is turning episodic
+success into systematic capability across environments, users, and task
+variations.</p>
+<h2 id="conditioning-on-text">Conditioning on Text</h2>
+<figure id="fig:saycan">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/saycan-grounding.svg" style="width:90.0%"
+alt="Grounding language instructions in robot capability. Left: a language model ranks candidate actions by P(a \mid \text{text}) for the instruction “get me a snack.” Right: after multiplying by the robot’s value function Q(s, a), which scores physical feasibility, the ranking changes — “bring sandwich” drops from second to fourth because the robot cannot assemble one." />
+<figcaption aria-hidden="true">Grounding language instructions in robot
+capability. <em>Left:</em> a language model ranks candidate actions by
+<span class="math inline">\(P(a \mid \text{text})\)</span> for the
+instruction “get me a snack.” <em>Right:</em> after multiplying by the
+robot’s value function <span class="math inline">\(Q(s, a)\)</span>,
+which scores physical feasibility, the ranking changes — “bring
+sandwich” drops from second to fourth because the robot cannot assemble
+one.</figcaption>
+</figure>
+<p>Text is an attractive goal interface because it is low-friction,
+expressive, and scalable for data collection. The policy <span
+class="math inline">\(\pi(\textbf{a}_t| \textbf{s}_t, \text{``Get me a
+snack&quot;}, \theta)\)</span> takes a natural language string as part
+of its input, so goals can be specified flexibly without ever requiring
+a goal image. <a href="#fig:saycan">Figure</a> shows one approach to
+grounding language goals in action selection by combining value
+functions with language model scoring. Writing text prompts is far
+cheaper and easier to standardize than producing high-quality goal
+images/videos — a real operational advantage, since a broad dataset
+requires a goal interface that is not itself the bottleneck. Text can
+also describe outcomes that do not yet exist anywhere in the dataset. A
+user can request “fold the laundry” or “clean the room” with no exact
+target image available at all. Language, in this sense, supports
+specification before demonstration, which expands the task space
+available to a learning algorithm.</p>
+<p>Text does not solve everything, though. Performance still depends on
+how language grounding connects to perception and control. If the
+model’s semantic interpretation is disconnected from physical execution,
+task completion is shallow or inconsistent. Text conditioning is a
+powerful interface layer, not a replacement for embodied interaction
+learning.</p>
+<h2 id="why-does-text-conditioning-work">Why Does Text Conditioning
+Work?</h2>
+<p>Text conditioning works because large language models encode broad
+statistical structure about goals, objects, and human intent, giving
+agents a flexible symbolic channel for task specification and
+compositional instructions. In practice this often makes language a
+stronger goal descriptor than brittle one-hot encodings.</p>
+<p>The grounding problem remains unresolved, though: linguistic tokens
+are not physical objects. A “cup” in text is not automatically linked to
+grasp points, mass distribution, friction, or motion constraints. “Clean
+the room” leaves precision, coverage, and acceptable outcomes all
+unresolved. Language encodes purpose and notions of how to complete the
+task, but becomes complete when symantics are unclear. How clean for the
+room? How fast should the room be cleaned? And other details that are
+more common sense and missing from the input.</p>
+<p>That is why multimodal systems are not optional for robust robotics.
+Vision, proprioception, and other sensors provide the closed-loop
+information control actually needs, while language supplies high-level
+intent. Good systems integrate both, letting semantic goals constrain
+action selection without pretending language alone carries enough
+information for physically grounded behavior. PaLM-E <span
+class="citation" data-cites="driess2023palme">(<a
+href="#ref-driess2023palme" role="doc-biblioref">Driess et al.
+2023</a>)</span> is a representative example, combining a large language
+model with visual encoders to produce policies conditioned on both image
+observations and natural language instructions.</p>
+<h2 id="where-does-the-data-come-from">Where Does the Data Come
+From?</h2>
+<figure id="fig:robotics-data">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image-16.png" style="width:70.0%"
+alt="Robotics data sources span teleoperation, third-person video, and autonomous interaction; the challenge is assembling enough diversity for stable abstraction learning." />
+<figcaption aria-hidden="true">Robotics data sources span teleoperation,
+third-person video, and autonomous interaction; the challenge is
+assembling enough diversity for stable abstraction
+learning.</figcaption>
+</figure>
+<p>The core data problem in robotics is not raw scarcity but structure,
+diversity, and accessibility. <a href="#fig:robotics-data">Figure</a>
+points at an enormous amount of interaction data already sitting in the
+world — industrial robots, mobile platforms, teleoperated systems — most
+of it siloed, weakly labeled, or hard to transfer across embodiments.
+Data volume is large; usable learning signal is hard to assemble.</p>
+<p>Teleoperation guarantees physically realizable trajectories for the
+target platform, which is valuable and expensive at scale. Third-person
+human video is abundant and varied, but it introduces embodiment
+mismatch: what a human can do does not map directly onto robot dynamics
+or morphology.</p>
+<p>The strategic objective is enough diversity that agents discover
+stable object and task abstractions — seeing enough diversity to realize
+there is “no diversity” at the right conceptual level, a cup if a cup in
+room A or B and a cup is still a cup with a different color or size. The
+model should stop memorizing superficial variation and start learning
+classes, structure, and controllable dynamics.</p>
+<h1 id="autonomous-learning-systems-deeprl">Autonomous Learning Systems
+(DeepRL)</h1>
+<p>When curated demonstrations run out, the agent has to become its own
+data collector. That is the motivation for autonomous learning systems:
+instead of waiting for a human to provide every trajectory, the robot
+interacts with the environment, evaluates outcomes through rewards, and
+incrementally improves its behavior.</p>
+<p>Reinforcement learning, framed this way, is not an optimization
+module bolted onto perception — it is a full data-generation and
+adaptation pipeline <span class="citation"
+data-cites="Sutton2018-pc">(<a href="#ref-Sutton2018-pc"
+role="doc-biblioref">Sutton and Barto 2018</a>)</span>. The
+“infinity-shot” framing is useful here: a system that can safely keep
+interacting can eventually solve many tasks that were never explicitly
+demonstrated, provided reward design and exploration are configured
+well.</p>
+<p>The remaining challenge is engineering, not philosophy: can
+autonomous loops be built stable, sample-efficient, and safe enough for
+deployment? If so, autonomous interaction becomes the mechanism that
+scales data collection past manual imitation and enables continual
+adaptation in real environments. ReLMM <span class="citation"
+data-cites="realmm">(<a href="#ref-realmm" role="doc-biblioref">Sun et
+al. 2021</a>)</span> is a concrete illustration, demonstrating a robot
+that autonomously collects experience and improves its manipulation
+policy through self-supervised interaction.</p>
+<h2 id="autonomous-learning">Autonomous Learning</h2>
+<figure id="fig:cluttered-env">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image.png" style="width:55.0%"
+alt="An unstructured real-world environment where autonomous learning must operate: cluttered, variable, and lacking manual resets (SQUIRREL Consortium 2013)." />
+<figcaption aria-hidden="true">An unstructured real-world environment
+where autonomous learning must operate: cluttered, variable, and lacking
+manual resets <span class="citation"
+data-cites="squirrel2013project">(<a href="#ref-squirrel2013project"
+role="doc-biblioref">SQUIRREL Consortium 2013</a>)</span>.</figcaption>
+</figure>
+<figure id="fig:rl-loop">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/rl-loop.svg" style="width:60.0%"
+alt="The reinforcement learning loop: the agent takes an action \textbf{a}_t, the environment transitions to \textbf{s}_{t+1} and emits reward r_t, and the policy is updated to favor higher-return actions." />
+<figcaption aria-hidden="true">The reinforcement learning loop: the
+agent takes an action <span class="math inline">\(\textbf{a}_t\)</span>,
+the environment transitions to <span
+class="math inline">\(\textbf{s}_{t+1}\)</span> and emits reward <span
+class="math inline">\(r_t\)</span>, and the policy is updated to favor
+higher-return actions.</figcaption>
+</figure>
+<p>Learning from interaction closes the loop between decision and
+consequence. Instead of imitating a static dataset forever, the agent
+acts, receives feedback, and updates its behavior in response to the
+environment it actually inhabits — essential in robotics, where
+deployment conditions differ from collection conditions and edge cases
+are unavoidable.</p>
+<p>The loop itself is conceptually simple: take an action, observe the
+next state, compute a reward, reinforce the better choice, as
+<a href="#fig:rl-loop">Figure</a> depicts.
+<a href="#fig:cluttered-env">Figure</a> shows the kind of unstructured
+environment this loop actually has to run in. Operationally the loop is
+deep — it couples perception, control, credit assignment, and planning
+under uncertainty, which is why RL is often described as a microcosm of
+the broader AI problem: nearly every major learning challenge shows up
+somewhere inside this one recurring process.</p>
+<p>Making the loop robust and data-efficient yields a general mechanism
+for adaptation. Without it, systems stay trapped in brittle imitation
+pipelines that fail as soon as the world shifts.</p>
+<h2 id="many-deeprl-algorithms">Many DeepRL Algorithms</h2>
+<p>A policy <span class="math inline">\(\pi(\textbf{a}_t| \textbf{s}_t,
+\theta)\)</span> induces a distribution over trajectories through
+interaction with environment dynamics. The probability of a trajectory
+<span class="math inline">\(\tau = (\textbf{s}_1, \textbf{a}_1, \ldots,
+\textbf{s}_T, \textbf{a}_T)\)</span> factorizes as:</p>
+<p><span class="math display">\[\begin{multline}
+\label{eq:path-prob}
+\underbrace{p(\textbf{s}_1, \textbf{a}_1, \ldots, \textbf{s}_T,
+\textbf{a}_T| \theta)}_{p(\tau|\theta)} =
+\underbrace{p(\textbf{s}_1)}_{\text{unknown}}\prod_{t=1}^{T}
+\pi(\textbf{a}_t| \textbf{s}_t, \theta) \underbrace{p(\textbf{s}_{t+1} |
+\textbf{s}_t, \textbf{a}_t)}_{\text{unknown}}
+\end{multline}\]</span></p>
+<p>The RL objective maximizes expected cumulative reward over this
+distribution:</p>
+<p><span class="math display">\[\begin{equation}
+\label{eq:sum-reward}
+\mathop{\mathrm{arg\,max \:}}_{\theta^{*}} \mathbb{E}_{\tau \sim
+p(\tau|\theta)}\left[\sum_{t} r(\textbf{s}_t,\textbf{a}_t)\right]
+\end{equation}\]</span></p>
+<p>A policy induces a distribution over trajectories through interaction
+with environment dynamics, formalized in
+<a href="#eq:path-prob">Figure</a>, and optimization maximizes expected
+cumulative reward over that distribution, given in
+<a href="#eq:sum-reward">Figure</a>. This framing is more informative
+than thinking in terms of one-step losses or isolated predictions.</p>
+<p>It also clarifies what robust performance actually means: not
+accurate local estimates, but sustained high return under long-horizon
+execution. Small local errors compound over time in robotics, so
+trajectory-level reasoning is the right granularity for evaluating
+progress.</p>
+<p>The framing doubles as a diagnostic tool. When a method fails, the
+question is whether it misestimates values, mishandles distribution
+shift, underexplores the state space, or produces unstable policy
+updates.</p>
+<h2 id="is-reinforcement-learning-data-hungry">Is Reinforcement Learning
+Data Hungry?</h2>
+<figure id="fig:data-hungry-policy">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/vgg16-policy-choice.png" style="width:90.0%"
+alt="A deep network policy maps observations to actions; the data efficiency question is how many environment interactions are needed before this mapping becomes reliable." />
+<figcaption aria-hidden="true">A deep network policy maps observations
+to actions; the data efficiency question is how many environment
+interactions are needed before this mapping becomes
+reliable.</figcaption>
+</figure>
+<p>The contrast between supervised learning and reinforcement learning
+starts at the level of data structure, illustrated architecturally in
+<a href="#fig:data-hungry-policy">Figure</a>. Supervised learning
+assumes independent and identically distributed (IID) samples: each
+example is drawn from a fixed distribution, and the order examples
+arrive in does not affect the training signal. This assumption is rarely
+satisfied perfectly, but it is close enough that supervised learning can
+be applied widely and reliably.</p>
+<p>With the agent actively gathering new data the IID assumption is not
+valid. Every transition the agent collects depends on the policy that
+generated it, which in turn depends on all prior updates. The agent
+cannot re-sample a state it visited last week — that exact state of the
+world no longer exists. Data is sequentially correlated,
+policy-dependent, and non-stationary throughout training, which
+undermines the convergence arguments that make supervised learning
+tractable.</p>
+<p>Deep RL is often called data-hungry because many algorithms need
+repeated exposure to similar states before converging, but the sharper
+framing is data utilization rather than data volume. Given a fixed
+dataset, how much reusable signal can the algorithm actually extract? An
+update rule that cannot absorb information already sitting in the
+experience makes the system look data-hungry even when the evidence is
+already there.</p>
+<p>The distinction matters for where to focus research. Some failures
+are exploration failures, but many are optimization and
+credit-assignment failures over existing data. Improving data reuse can
+produce large sample-efficiency gains without touching exploration
+budgets, and without waiting for exploration to be solved first.
+<!-- Need more citations for this paragraph --></p>
+<h2 id="how-can-reinforcement-learning-be-better-fed">How can
+Reinforcement Learning be Better Fed?</h2>
+<figure id="fig:lecun-cake">
+<img src="/assets/chapters/lec17-OfflineRL/figures/lecun-cake.png" style="width:70.0%"
+alt="The data hierarchy (LeCun 2018): unsupervised and self-supervised signals vastly outnumber labeled reward signals, yet RL methods often fail to exploit the unlabeled majority." />
+<figcaption aria-hidden="true">The data hierarchy (LeCun 2018):
+unsupervised and self-supervised signals vastly outnumber labeled reward
+signals, yet RL methods often fail to exploit the unlabeled
+majority.</figcaption>
+</figure>
+<p>The “better fed” question is whether RL’s sample complexity is
+fundamental, or partly self-inflicted through weak replay efficiency.
+<a href="#fig:lecun-cake">Figure</a> frames this through the cake,
+icing, and cherries analogy: the vast majority of useful signal lies in
+the unlabeled or self-supervised regime, and current RL methods
+routinely fail to exploit it. Interaction data is expensive in most
+settings, yet algorithms still fail to fully use what they already
+collected.</p>
+<p>Supervised learning gets much of its efficiency by revisiting a
+static dataset many times. Deep RL often cannot do this safely —
+repeated optimization on replay can destabilize value estimates and
+induce policy collapse. Data that should be informative ends up
+underused as a result~<span class="citation"
+data-cites="Van_Hasselt2018-dd">(<a href="#ref-Van_Hasselt2018-dd"
+role="doc-biblioref">Hasselt et al. 2018</a>)</span>.</p>
+<p>Feeding RL better means increasing the useful passes over replay
+while holding stability~<span class="citation"
+data-cites="Fedus2020-um">(<a href="#ref-Fedus2020-um"
+role="doc-biblioref">Fedus et al. 2020</a>)</span>. If every transition
+contributes more gradient signal before it gets discarded, real-world
+interaction costs fall and practical autonomous learning gets
+closer.</p>
+<h1 id="can-reinforcement-learning-eat-more">Can Reinforcement Learning
+Eat More?</h1>
+<figure id="fig:replay-efficiency">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image-18.png" style="width:65.0%"
+alt="Squeezing every useful gradient from collected experience: the goal is to maximize replay ratio while avoiding value divergence." />
+<figcaption aria-hidden="true">Squeezing every useful gradient from
+collected experience: the goal is to maximize replay ratio while
+avoiding value divergence.</figcaption>
+</figure>
+<p>Replay stability is a central asymmetry between supervised learning
+and deep RL. Supervised models tolerate many epochs over the same data;
+deep RL models frequently diverge when replay is pushed too
+aggressively. <a href="#fig:replay-efficiency">Figure</a> captures the
+goal — extracting every useful gradient from collected data before
+discarding it — which makes RL paradoxically bad at one of the most
+valuable forms of learning efficiency.</p>
+<p>On-policy methods are stable but data-intensive, often reusing each
+new batch of collected data only 4-5 times. Off-policy methods increase
+reuse by learning from behavior generated by older policies, but that
+introduces distribution mismatch and bootstrapping instability. Reuse
+versus divergence is a constant balancing act.</p>
+<p>The long-term objective is explicit: increase replay ratio and model
+capacity while controlling instability. This is not a minor
+optimization; it is foundational for making RL viable and scalable in
+data-constrained robotic domains.</p>
+<p>Experience replay operationalizes reuse: the agent stores transitions
+as experience, samples mini-batches from it, and performs optimization
+updates between collection phases <span class="citation"
+data-cites="Lin1992-br Mnih2013-up Fedus2020-um">(<a
+href="#ref-Lin1992-br" role="doc-biblioref">Lin 1992</a>; <a
+href="#ref-Mnih2013-up" role="doc-biblioref">Mnih et al. 2013</a>; <a
+href="#ref-Fedus2020-um" role="doc-biblioref">Fedus et al.
+2020</a>)</span>. The Q-iteration algorithm formalizes this.</p>
+<p>This procedure should, in principle, let the learner squeeze far more
+signal from each expensive interaction.</p>
+<p>The key parameter is the replay ratio <span
+class="math inline">\(k\)</span>: how many gradient updates are
+performed per unit of newly collected data. Ideally <span
+class="math inline">\(k\)</span> would be high and learning would keep
+improving until it saturates. In practice, higher replay amplifies value
+overestimation, distribution mismatch, and bootstrapping artifacts.</p>
+<p>Much of modern deep RL is a controlled attempt to raise effective
+replay safely: better targets, regularization, conservative updates,
+representation stabilization. The engineering goal is simple to state
+and hard to achieve — maximize learning per sample without crossing the
+divergence boundary.</p>
+<h2 id="how-can-reinforcement-learning-scale">How can Reinforcement
+Learning scale?</h2>
+<figure id="fig:scaling-instability">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/policy-gradient-stepsize.svg" style="width:80.0%"
+alt="A small gradient step size \alpha produces stable convergence toward the optimal policy parameter \theta^*, while a large step size causes the update to overshoot the peak of the return surface J(\theta) and land at a lower return." />
+<figcaption aria-hidden="true">A small gradient step size <span
+class="math inline">\(\alpha\)</span> produces stable convergence toward
+the optimal policy parameter <span
+class="math inline">\(\theta^*\)</span>, while a large step size causes
+the update to overshoot the peak of the return surface <span
+class="math inline">\(J(\theta)\)</span> and land at a lower
+return.</figcaption>
+</figure>
+<p>Scaling reinforcement learning is often framed as a parameter-count
+question, but the more immediate obstacle is choosing the step size
+<span class="math inline">\(\alpha\)</span> for the policy update.
+<a href="#fig:scaling-instability">Figure</a> makes the failure mode
+concrete: a step size small enough to converge smoothly near the optimum
+<span class="math inline">\(\theta^*\)</span> can, from a different
+point on the return surface <span
+class="math inline">\(J(\theta)\)</span>, overshoot the peak entirely
+and land at a lower return. The same <span
+class="math inline">\(\alpha\)</span> is stable in one region of
+parameter space and destructive in another.</p>
+<p>Supervised learning tolerates a fairly wide range of learning rates
+because the loss surface is fixed by a static, IID dataset — the surface
+being climbed does not depend on where training currently is.
+Reinforcement learning breaks that assumption: the policy update changes
+the action distribution, which changes the states subsequently visited,
+which reshapes <span class="math inline">\(J(\theta)\)</span> itself. A
+step size that was safe under the old visitation distribution can become
+unstable once the policy has moved, so there is no single constant <span
+class="math inline">\(\alpha\)</span> that stays safe throughout
+training. In addition, because an agent is constantly exploriong, it is
+not clear when the agent is converging towards an optimal policy, making
+it difficult to use learning rate annealing methods.</p>
+<p>Current mitigations attack the step-size problem directly rather than
+the parameter count: network resets counteract the loss of plasticity
+that makes later updates behave unpredictably <span class="citation"
+data-cites="Nikishin2022-sb">(<a href="#ref-Nikishin2022-sb"
+role="doc-biblioref">Nikishin et al. 2022</a>)</span>, constrained
+updates bound how much the policy and its value estimates are allowed to
+churn per step <span class="citation" data-cites="Tang2024-bg">(<a
+href="#ref-Tang2024-bg" role="doc-biblioref">Tang and Berseth
+2024</a>)</span>, and pretrained priors start optimization from a region
+of parameter space where a given step size is already well-behaved <span
+class="citation" data-cites="Zeng2024-zq">(<a href="#ref-Zeng2024-zq"
+role="doc-biblioref">Zeng et al. 2024</a>)</span>. These help, but the
+evidence is uneven across algorithm families. Value-based pipelines have
+seen more scaling wins than pure policy-gradient systems, where
+step-size sensitivity and variance remain the major bottleneck.</p>
+<h2 id="how-well-does-deep-rl-work">How Well Does Deep RL Work?</h2>
+<p>Deep RL methods differ not only in implementation but in objective
+alignment. Value-based methods optimize Bellman-consistency surrogates,
+which are useful but only indirectly related to true return maximization
+in nonlinear regimes — which is why low value error does not always
+translate into strong control behavior.</p>
+<p>Model-based methods face a related disconnect. Improving world-model
+prediction quality can be valuable, but better one-step prediction does
+not automatically mean better policy performance unless planning and
+control actually exploit that model correctly. A model can be made more
+accurate with no guarantee of improved return.
+<!-- Need a citation above --></p>
+<p>Policy-gradient methods are attractive because they optimize return
+directly, but that benefit comes with high variance and sensitivity to
+update stability. No family is universally superior; each trades off
+objective fidelity, sample efficiency, and optimization robustness
+differently.</p>
+<h2 id="reinforcement-learning-assumptions">Reinforcement Learning
+Assumptions</h2>
+<p>Assumption mismatch is a recurring theme in robot learning. Three
+assumptions appear most often in the theoretical foundations of deep RL,
+and all three are routinely violated in real robotic settings.</p>
+<p>The first is full observability: many value-function algorithms
+assume the policy conditions on the complete state <span
+class="math inline">\(\textbf{s}_t\)</span> rather than a partial
+observation <span class="math inline">\(\textbf{o}_t\)</span>. Real
+sensors are occluded, time-varying, and noisy. The standard mitigation
+is recurrent memory — typically an LSTM — so the policy can integrate
+evidence over time instead of acting on a single frame. This helps, but
+it shifts the problem from observability to credit assignment over long
+histories.</p>
+<p>The second is episodic resettability, or ergodicity: some algorithms
+implicitly assume <span class="math inline">\(p(\textbf{s}) &gt;
+0\)</span> for all relevant states, meaning the agent can revisit any
+state during training. Robotics violates this outright — time cannot be
+rewound. A physical robot that breaks an object or tips over cannot
+replay that transition from scratch. Algorithms that depend on dense,
+on-demand revisitation of past states need redesigning, or need explicit
+data-collection strategies bolted on, before real deployment.</p>
+<p>The third is continuity or smoothness: continuous value-function
+methods and some model-based approaches assume the dynamics and reward
+are smooth enough for gradient-based updates. Contact-rich manipulation,
+locomotion on rough terrain, and other physically realistic settings
+routinely violate this through hard contacts, impacts, and discontinuous
+friction.</p>
+<p>Knowing which assumptions an algorithm requires, and which ones a
+given platform violates, is the first diagnostic step when a method
+fails to transfer from simulation to the real world.</p>
+<p>Assumptions remain useful as analytical scaffolding, but they are
+approximations, not deployment guarantees. The stronger workflow for
+applied research is identifying which assumptions fail first for the
+target platform, then building explicit mitigations into the algorithm
+and evaluation protocol.</p>
+<h2 id="the-importance-of-embodiment">The Importance of Embodiment</h2>
+<figure id="fig:robot-embodiment">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/morphology-embodiment.svg" style="width:80.0%"
+alt="From left to right: amoeba, wheeled robot, robot arm, and humanoid. Each richer morphology unlocks a larger accessible behaviour space, shown as a growing bubble of learnable tasks." />
+<figcaption aria-hidden="true">From left to right: amoeba, wheeled
+robot, robot arm, and humanoid. Each richer morphology unlocks a larger
+accessible behaviour space, shown as a growing bubble of learnable
+tasks.</figcaption>
+</figure>
+<p>Embodiment is not peripheral to intelligence; it defines the space of
+possible interaction. An amoeba, with extremely limited mobility and
+actuation, can only sample a narrow slice of the world — which restricts
+what it can learn regardless of algorithm quality.</p>
+<p>The same principle applies to robots. A stationary arm, a wheeled
+base, and a dexterous humanoid, shown in
+<a href="#fig:robot-embodiment">Figure</a>, each expose different
+controllable state spaces and affordances. A platform that cannot
+manipulate objects cannot acquire manipulation-relevant experience; a
+platform that cannot navigate varied terrain keeps a world model that
+stays narrow.</p>
+<p>Morphology is therefore part of the learning problem, not hardware
+packaging. Progress toward general-purpose agents depends on aligning
+algorithm design with embodiment capabilities, because representation,
+exploration, and skill acquisition are all constrained by what the robot
+can physically perform.</p>
+<p>Whether humanoid morphology is necessary for general-purpose robotics
+remains an open question. The humanoid form grants access to
+environments and tools built for human proportions — doorknobs,
+staircases, keyboards, chairs — a real advantage for systems meant to
+operate in homes and offices. Against that, humanoid locomotion is
+mechanically complex and costly to control, and many tasks that seem to
+call for a humanoid form can be handled by simpler morphologies with the
+right end-effector. The answer likely depends on task scope: a
+narrow-task robot can be purpose-built, while a truly general-purpose
+agent may eventually need the embodiment flexibility the humanoid form
+provides.</p>
+<h1 id="what-behaviour-do-users-want-agents-to-optimize">What behaviour
+do Users Want agents to optimize?</h1>
+<figure id="fig:goal-image-issues">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/goal-image-issues.png" style="width:90.0%"
+alt="The same room before (messy) and after (tidied), with an identical park visible through the window in both states. A pixel-level goal-image reward would penalise any difference in the outdoor scene — people walking, lighting shifts — even though those changes are entirely outside the agent’s control and irrelevant to the task of tidying the room." />
+<figcaption aria-hidden="true">The same room before (messy) and after
+(tidied), with an identical park visible through the window in both
+states. A pixel-level goal-image reward would penalise any difference in
+the outdoor scene — people walking, lighting shifts — even though those
+changes are entirely outside the agent’s control and irrelevant to the
+task of tidying the room.</figcaption>
+</figure>
+<p>Goal images are intuitive, but they often over-specify user intent.
+<a href="#fig:goal-image-issues">Figure</a> shows how the same goal
+image admits multiple conflicting interpretations. Optimization tied to
+pixel-level matching can penalize the agent for irrelevant differences —
+lighting, background changes, scenery outside a window — even when the
+true task objective is fully satisfied.</p>
+<p>Taken to its extreme, pixel matching implies absurd objectives, such
+as reconstructing the entire outside world to match the historical scene
+visible through a window. Nobody means this by “clean my room,” but it
+can still emerge from a poorly aligned reward definition.</p>
+<p>The challenge is balancing specificity with flexibility. Text goals
+tend to be under-specified; image goals tend to be over-specified. A
+better goal representation captures intent-level constraints and leaves
+irrelevant variation unconstrained, so the policy optimizes what the
+user actually cares about rather than accidental visual detail.
+<!-- This should be combined with the earlier discussion on image vs text goals --></p>
+<h2 id="learning-new-skills">Learning New Skills</h2>
+<figure id="fig:learning-new-skills">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/learning-new-skills.svg" style="width:90.0%"
+alt="The landscape of skills learned by current systems, divided by category. The majority of learned behaviours reproduce demonstrations or recombine existing human knowledge; only a small frontier involves genuinely novel discovery beyond what is already known." />
+<figcaption aria-hidden="true">The landscape of skills learned by
+current systems, divided by category. The majority of learned behaviours
+reproduce demonstrations or recombine existing human knowledge; only a
+small frontier involves genuinely novel discovery beyond what is already
+known.</figcaption>
+</figure>
+<p>Most contemporary progress still emphasizes reproducing known
+behaviors: imitation learning from expert demonstrations, benchmark
+repetition, constrained task suites, as
+<a href="#fig:learning-new-skills">Figure</a> reflects. These are
+valuable milestones, but they do not test whether an agent can produce
+genuinely new solutions in an open-ended setting. Both imitation
+learning and large language models are trained predominantly on existing
+human knowledge — they are efficient at recombining what people already
+know, not at generating fundamentally new solutions.</p>
+<p>The more ambitious goal is an agent capable of scientific discovery
+and open-ended problem solving. Designing a more efficient battery is
+categorically different from cleaning a room: no demonstration dataset
+contains the optimal solution, the search space is physical chemistry
+rather than motor control, and evaluation requires novel experimental
+evidence rather than a task-completion criterion. An agent pursuing such
+goals would have to act as an autonomous scientific instrument —
+designing hypotheses, collecting evidence, revising plans
+iteratively.</p>
+<p>Humans are not actually well-suited to this kind of extended,
+unbiased planning. People anchor on familiar solutions and struggle with
+exhaustive combinatorial search~<span class="citation"
+data-cites="buehler2015planning">(<a href="#ref-buehler2015planning"
+role="doc-biblioref">Buehler and Griffin 2015</a>)</span>. Machine
+learning systems can evaluate large hypothesis spaces systematically,
+given the right structure. Physical interaction through robotics,
+planning through search or model-based RL, and broad language priors
+through foundation models may eventually combine to support genuinely
+novel discovery — but doing so requires going well beyond the
+replay-based pipelines that dominate current benchmarks.</p>
+<p>This is where continual learning becomes essential. Real deployments
+carry long tails of unusual cases, shifting constraints, and
+nonstationary objectives. A system that stops learning after pretraining
+plateaus quickly; a system that keeps adapting accumulates capability
+and handles novelty with increasing competence over time.</p>
+<h2 id="consider-the-environment">Consider the Environment</h2>
+<figure id="fig:environment-stochasticity">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/env-stocasticity.png" style="width:65.0%"
+alt="Sources of environmental stochasticity and nonstationarity: other agents, natural changes, novel objects, and real-time constraints where time continues during inference." />
+<figcaption aria-hidden="true">Sources of environmental stochasticity
+and nonstationarity: other agents, natural changes, novel objects, and
+real-time constraints where time continues during
+inference.</figcaption>
+</figure>
+<p>Real environments are not static testbeds.
+<a href="#fig:environment-stochasticity">Figure</a> shows what they
+actually contain: other agents, shifting conditions, changing
+constraints, persistent uncertainty. A policy in this setting must be
+robust not only to noise but to the ongoing nonstationarity that
+interaction itself generates.</p>
+<p>For exploration naive novelty-seeking is not enough here. Useful
+behavior requires structured adaptation: exploring enough to keep
+learning, while staying stable enough to preserve task performance and
+safety. Diversity and chaos are features of the real world, not corner
+cases to be engineered away.</p>
+<p>Timing is a further constraint on deployment. Real-time control does
+not wait for slow deliberation. If model complexity grows without a
+matching constraint on latency, performance can collapse even when
+nominal policy quality looks strong offline. Practical intelligence in
+robotics has to combine adaptation quality with strict reaction-time
+constraints.</p>
+<h2 id="what-is-our-reward-function">What is our reward function?</h2>
+<figure id="fig:shelter-construction">
+<img src="/assets/chapters/lec00-WhatIsRobotLearning/figures/image-9.png" style="width:65.0%"
+alt="A robot learning to construct shelter as an emergent behavior from surprise-minimization objectives: maintaining local order as a proxy for long-term survival." />
+<figcaption aria-hidden="true">A robot learning to construct shelter as
+an emergent behavior from surprise-minimization objectives: maintaining
+local order as a proxy for long-term survival.</figcaption>
+</figure>
+<p>Reward specification is one of the hardest unsolved problems in
+autonomous learning. Even a compelling broad principle — minimizing
+surprise, maintaining local order — is difficult to translate into a
+tractable objective that can be optimized at scale.</p>
+<p>The biological framing is a useful starting point: agents survive by
+keeping key state variables within viable ranges despite environmental
+volatility <span class="citation" data-cites="friston2009free">(<a
+href="#ref-friston2009free" role="doc-biblioref">Friston
+2009</a>)</span>. Humans go to considerable lengths to shield themselves
+from surprise — building homes, and supplying them with water, food, and
+electricity, is largely an exercise in making the environment more
+predictable. Could the same motive — preserving order — drive the
+automatic acquisition of useful behavior in an artificial agent, with no
+external task reward at all?</p>
+<p>Unsupervised reinforcement learning takes this question seriously,
+and surprise minimization is one instance of it: an agent rewarded
+simply for reaching predictable, familiar states, with no notion of
+tasks or goals built in <span class="citation"
+data-cites="berseth2019smirl">(<a href="#ref-berseth2019smirl"
+role="doc-biblioref">Berseth et al. 2021</a>)</span>. Minimizing
+surprise does not mean sitting still, since the world keeps perturbing
+the agent away from familiar states; staying predictable requires acting
+continually and purposefully to return to them. The shelter-construction
+behavior in <a href="#fig:shelter-construction">Figure</a> shows what
+this can produce: a simulated agent exposed to changing wind and weather
+discovers that building a wall around itself keeps its future
+observations stable, at the cost of some short-term surprise while
+building it. No task reward, demonstration, or notion of “shelter” was
+ever given to the agent — the behavior is a side effect of minimizing
+surprise over its own experience.</p>
+<p>This is instructive as much as it is a cautionary tale. Surprise
+minimization is a genuinely reward-free objective that produces
+recognizable, useful-looking behavior — but only because this particular
+environment happened to make orderliness and survival coincide. Nothing
+in the objective itself points at chores, shelter, or usefulness; a
+different environment could just as easily reward an agent for hiding in
+a corner and refusing to look at anything new. This is the general
+problem with reward design: a broad, elegant principle is not
+automatically a safe or well-aligned one. Rewards must be computable,
+aligned with the desired long-horizon outcome, and resistant to shortcut
+solutions, or they produce behavior that is technically optimal and
+practically wrong. Reward design is not an implementation detail — it is
+the central interface between human intent and autonomous behavior.</p>
+<h2 id="the-supports">The Supports</h2>
+<p>The three pillars in <a href="#fig:three-pillars">Figure</a> — deep
+learning for perception and representation, reinforcement learning for
+autonomous interaction, generalization methods for transfer to new
+settings — are not independent components. They are mutually reinforcing
+foundations, and all three must function together before a robot can
+operate competently in the open world.</p>
+<p>Deep learning provides the capacity to process high-dimensional,
+unstructured observations — images, proprioceptive signals — and to
+learn compact representations that support downstream decision-making.
+Without strong perception, the policy cannot accurately assess the
+current state of the world, and neither planning nor reward optimization
+will function reliably.</p>
+<p>Reinforcement learning with intrinsic rewards provides the mechanism
+for learning new skills through interaction rather than explicit
+programming or manual demonstration. It lets the agent discover
+solutions that would be impractical to specify in advance, and keep
+improving past the limits of any available dataset.</p>
+<p>Generalization methods — goal conditioning, transfer learning, domain
+randomization, simulation-to-real transfer — extend competence beyond
+the specific situations encountered during training. Without
+generalization, a robot is a sophisticated but narrow specialist:
+excellent on the exact task and environment it was trained for, and
+degraded under any variation from it.</p>
+<p>Together these three pillars define the scope of modern robot
+learning research, and the structure of this course. Progress on any one
+pillar in isolation is not enough; effective robotic systems require all
+three addressed at once.</p>
+<h2 id="get-involved-and-learn-10">Get Involved and Learn (10%)</h2>
+<p>The connection between active participation and learning is not
+metaphorical — it reflects a deep theoretical result in causal inference
+<span class="citation" data-cites="pearl2009causality">(<a
+href="#ref-pearl2009causality" role="doc-biblioref">Pearl
+2009</a>)</span>, shown in <a href="#fig:causal-graph">Figure</a>.
+Building an accurate causal model of a domain requires more than passive
+observation. An agent must intervene: take actions, observe the
+resulting changes, compare outcomes across conditions. Without
+intervention, correlation and causation cannot be disentangled, and the
+model stays a statistical summary of observed patterns rather than a
+true account of how the world responds to actions.</p>
+<p>The same principle applies to learning in a classroom or research
+setting. Passive attendance exposes a student to information, but it
+does not guarantee a correct causal model gets acquired. The way to find
+out whether an understanding is accurate — and to correct it if it is
+not — is to intervene: ask questions, propose answers, attempt problems,
+and observe where the responses diverge from expectation.</p>
+<p>An early experiment in developmental neuroscience illustrates the
+stakes. Kittens physically prevented from moving during a critical
+period of visual development — carried passively rather than allowed to
+walk — later failed to develop normal depth perception and motor
+coordination, even though they had been exposed to the same visual
+scenes as their free-moving littermates. Active interaction with the
+environment, not mere passive exposure to its sensory outputs, was
+required to develop calibrated representations and control.</p>
+<p>The same principle scales to research. A scientist who only reads
+papers and never runs experiments, conducts ablations, or tests
+predictions against real data develops imprecise intuitions that cannot
+be reliably corrected. Act, observe, update — this intervention loop is
+the shared mechanism behind reinforcement learning, scientific
+discovery, and learning in any domain.</p>
+<h1 class="unnumbered" id="bibliography">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-berseth2019smirl" class="csl-entry" role="listitem">
+Berseth, Glen, Daniel Geng, Coline Devin, Nicholas Reinhardt, Chelsea
+Finn, Dinesh Jayaraman, and Sergey Levine. 2021. <span>“SMiRL: Surprise
+Minimizing RL in Unstable Environments.”</span> <em>International
+Conference on Learning Representations (ICLR) 2021 <strong>(Oral, Top
+1.8 %)</strong></em>. <a
+href="https://arxiv.org/abs/1912.05510">https://arxiv.org/abs/1912.05510</a>.
+</div>
+<div id="ref-buehler2015planning" class="csl-entry" role="listitem">
+Buehler, Roger, and Dale Griffin. 2015. <span>“The Planning
+Fallacy.”</span> <em>The Psychology of Planning in Organizations:
+Research and Applications</em> 31.
+</div>
+<div id="ref-cai2025survey" class="csl-entry" role="listitem">
+Cai, Weilin, Juyong Jiang, Fan Wang, Jing Tang, Sunghun Kim, and Jiayi
+Huang. 2025. <span>“A Survey on Mixture of Experts in Large Language
+Models.”</span> <em>IEEE Transactions on Knowledge and Data
+Engineering</em> 37 (7): 3896–3915.
+</div>
+<div id="ref-driess2023palme" class="csl-entry" role="listitem">
+Driess, Danny, Fei Xia, Mehdi S. M. Sajjadi, Corey Lynch, Aakanksha
+Chowdhery, Brian Ichter, Ayzaan Wahid, et al. 2023. <span>“PaLM-e: An
+Embodied Multimodal Language Model.”</span> <a
+href="https://arxiv.org/abs/2303.03378">https://arxiv.org/abs/2303.03378</a>.
+</div>
+<div id="ref-Fedus2020-um" class="csl-entry" role="listitem">
+Fedus, William, Prajit Ramachandran, Rishabh Agarwal, Yoshua Bengio,
+Hugo Larochelle, Mark Rowland, and Will Dabney. 2020. <span>“Revisiting
+Fundamentals of Experience Replay.”</span> In <em>Proceedings of the
+37th International Conference on Machine Learning</em>, edited by Hal
+Daumé Iii and Aarti Singh, 119:3061–71. Proceedings of Machine Learning
+Research. PMLR.
+</div>
+<div id="ref-friston2009free" class="csl-entry" role="listitem">
+Friston, Karl. 2009. <span>“The Free-Energy Principle: A Rough Guide to
+the Brain?”</span> <em>Trends in Cognitive Sciences</em> 13 (7):
+293–301.
+</div>
+<div id="ref-Ghugare2024-xh" class="csl-entry" role="listitem">
+Ghugare, Raj, Matthieu Geist, Glen Berseth, and Benjamin Eysenbach.
+2024. <span>“Closing the Gap Between <span>TD</span> Learning and
+Supervised Learning – a Generalisation Point of View.”</span> In <em>The
+Twelfth International Conference on Learning Representations</em>.
+</div>
+<div id="ref-Van_Hasselt2018-dd" class="csl-entry" role="listitem">
+Hasselt, Hado van, Yotam Doron, Florian Strub, Matteo Hessel, Nicolas
+Sonnerat, and Joseph Modayil. 2018. <span>“Deep Reinforcement Learning
+and the Deadly Triad,”</span> December. <a
+href="https://arxiv.org/abs/1812.02648">https://arxiv.org/abs/1812.02648</a>.
+</div>
+<div id="ref-kaelbling1998planning" class="csl-entry" role="listitem">
+Kaelbling, Leslie Pack, Michael L Littman, and Anthony R Cassandra.
+1998. <span>“Planning and Acting in Partially Observable Stochastic
+Domains.”</span> <em>Artificial Intelligence</em> 101 (1-2): 99–134.
+</div>
+<div id="ref-Lin1992-br" class="csl-entry" role="listitem">
+Lin, Long-Ji. 1992. <span>“Self-Improving Reactive Agents Based on
+Reinforcement Learning, Planning and Teaching.”</span> <em>Mach.
+Learn.</em> 8 (3): 293–321.
+</div>
+<div id="ref-lukacs2021sesn" class="csl-entry" role="listitem">
+Lukacs, Mark Erik, and Stefan Petrescu. 2021. <span>“Scale-Equivariant
+<span>CNNs</span>: How to Design a Network for
+Scale-Equivariance.”</span> Towards Data Science (Medium). <a
+href="https://medium.com/data-science/sesn-cec766026179">https://medium.com/data-science/sesn-cec766026179</a>.
+</div>
+<div id="ref-Mnih2013-up" class="csl-entry" role="listitem">
+Mnih, Volodymyr, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis
+Antonoglou, Daan Wierstra, and Martin Riedmiller. 2013. <span>“Playing
+Atari with Deep Reinforcement Learning,”</span> December. <a
+href="https://arxiv.org/abs/1312.5602">https://arxiv.org/abs/1312.5602</a>.
+</div>
+<div id="ref-Nikishin2022-sb" class="csl-entry" role="listitem">
+Nikishin, Evgenii, Max Schwarzer, Pierluca D’Oro, Pierre-Luc Bacon, and
+Aaron Courville. 2022. <span>“The Primacy Bias in Deep Reinforcement
+Learning.”</span> In <em>Proceedings of the 39th International
+Conference on Machine Learning</em>, edited by Kamalika Chaudhuri,
+Stefanie Jegelka, Le Song, Csaba Szepesvari, Gang Niu, and Sivan Sabato,
+162:16828–47. Proceedings of Machine Learning Research. PMLR.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry" role="listitem">
+Pearl, Judea. 2009. <em>Causality</em>. Cambridge university press.
+</div>
+<div id="ref-schwartz1983piano" class="csl-entry" role="listitem">
+Schwartz, Jacob T, and Micha Sharir. 1983. <span>“On the <span>‘Piano
+Movers’</span> Problem. II. General Techniques for Computing Topological
+Properties of Real Algebraic Manifolds.”</span> <em>Advances in Applied
+Mathematics</em> 4 (3): 298–351.
+</div>
+<div id="ref-squirrel2013project" class="csl-entry" role="listitem">
+SQUIRREL Consortium. 2013. <span>“<span>SQUIRREL</span> Project
+Objectives: Scaling up Qualitative Robot Learning in Unstructured
+Environments.”</span> EU FP7 Project Website. <a
+href="http://www.squirrel-project.eu/objectives.html">http://www.squirrel-project.eu/objectives.html</a>.
+</div>
+<div id="ref-realmm" class="csl-entry" role="listitem">
+Sun, Charles, Jedrzej Orbik, Coline Devin, Brian Yang, Abhishek Gupta,
+Glen Berseth, and Sergey Levine. 2021. <span>“ReLMM: Practical RL for
+Learning Mobile Manipulation Skills Using Only Onboard Sensors.”</span>
+In <em>Conference on Robot Learning (CoRL)</em>. CoRL ’21.
+</div>
+<div id="ref-Sutton2018-pc" class="csl-entry" role="listitem">
+Sutton, Richard S, and Andrew G Barto. 2018. <em>Reinforcement Learning,
+Second Edition: An Introduction</em>. MIT Press.
+</div>
+<div id="ref-Tang2024-bg" class="csl-entry" role="listitem">
+Tang, Hongyao, and Glen Berseth. 2024. <span>“Improving Deep
+Reinforcement Learning by Reducing the Chain Effect of Value and Policy
+Churn.”</span> In <em>The Thirty-Eighth Annual Conference on Neural
+Information Processing Systems</em>.
+</div>
+<div id="ref-Zeng2024-zq" class="csl-entry" role="listitem">
+Zeng, Kuo-Hao, Zichen Zhang, Kiana Ehsani, Rose Hendrix, Jordi Salvador,
+Alvaro Herrasti, Ross Girshick, Aniruddha Kembhavi, and Luca Weihs.
+2024. <span>“<span>PoliFormer</span>: Scaling on-Policy <span>RL</span>
+with Transformers Results in Masterful Navigators.”</span> In <em>8th
+Annual Conference on Robot Learning</em>.
+</div>
+</div>
